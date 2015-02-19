@@ -1,0 +1,73 @@
+{
+  "results": [
+    {
+      "address_components": [
+        {
+          "long_name": "Rehoboth",
+          "short_name": "Rehoboth",
+          "types": [
+            "locality",
+            "political"
+          ]
+        },
+        {
+          "long_name": "Bristol County",
+          "short_name": "Bristol County",
+          "types": [
+            "administrative_area_level_2",
+            "political"
+          ]
+        },
+        {
+          "long_name": "Massachusetts",
+          "short_name": "MA",
+          "types": [
+            "administrative_area_level_1",
+            "political"
+          ]
+        },
+        {
+          "long_name": "United States",
+          "short_name": "US",
+          "types": [
+            "country",
+            "political"
+          ]
+        }
+      ],
+      "formatted_address": "Rehoboth, MA, USA",
+      "geometry": {
+        "bounds": {
+          "northeast": {
+            "lat": 41.911361,
+            "lng": -71.18749609999999
+          },
+          "southwest": {
+            "lat": 41.7746688,
+            "lng": -71.30329689999999
+          }
+        },
+        "location": {
+          "lat": 41.8470056,
+          "lng": -71.2393933
+        },
+        "location_type": "APPROXIMATE",
+        "viewport": {
+          "northeast": {
+            "lat": 41.911361,
+            "lng": -71.18749609999999
+          },
+          "southwest": {
+            "lat": 41.7746688,
+            "lng": -71.30329689999999
+          }
+        }
+      },
+      "types": [
+        "locality",
+        "political"
+      ]
+    }
+  ],
+  "status": "OK"
+}

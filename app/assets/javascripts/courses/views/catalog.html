@@ -1,0 +1,35 @@
+<div layout="row" layout-align="center start">
+  <div layout="column" flex="60">
+    <md-card>
+      <md-toolbar>
+        <md-input-container class="mh++">
+          <label style="color: white;"><i class="mdi mdi-magnify mdi--xl"></i> Search</label>
+          <input style="color: white; border-color:white;" ng-model="searchText" type="text">
+        </md-input-container>
+      </md-toolbar>
+      <md-card-content>
+        <md-progress-linear ng-show="loading" md-mode="indeterminate"></md-progress-linear>
+        <md-list>
+          <md-item ng-repeat="course in courses">
+            <md-item-content>
+              <div class="md-tile-content">
+                <h3>{{ course.name }}</h3>
+                <h4>{{ course.city }}, {{ course.state }}</h4>
+              </div>
+              <div class="md-tile-right">
+                <md-button ng-click="showCourseDetails(course.id)" class="md-primary" aria-label="Course Information">
+                  <i class="mdi mdi-chevron-right mdi--xl"></i>
+                </md-button>
+              </div>
+            </md-item-content>
+            <md-divider ng-if="!$last"></md-divider>
+          </md-item>
+        </md-list>
+      </md-card-content>
+    </md-card>
+  </div>
+  <div ng-if="user" layout="column" flex="40">
+    <user-recent-course-list></user-recent-course-list>
+    <user-requested-course-list></user-requested-course-list>
+  </div>
+</div>

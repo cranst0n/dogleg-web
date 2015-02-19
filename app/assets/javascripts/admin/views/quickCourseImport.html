@@ -1,0 +1,16 @@
+<md-card ng-cloak>
+  <md-toolbar>
+    <h2 class="md-toolbar-tools" layout-align="space-between center">
+      <span>Multi-Course Import</span>
+      <md-button ng-click="importCourses(filesToImport)" class="md-accent md-raised" ng-if="!importing && filesToImport.length > 0">
+        Import <span ng-if="filesToImport.length > 0"> {{ filesToImport.length }} </span> Courses
+      </md-button>
+    </h2>
+  </md-toolbar>
+  <md-card-content>
+    <md-input-container>
+      <input type="file" fileread="inputFiles" multiple>
+    </md-input-container>
+    <md-progress-linear ng-show="importing" md-mode="indeterminate"></md-progress-linear>
+  </md-card-content>
+</md-card>

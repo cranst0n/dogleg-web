@@ -1,0 +1,25 @@
+{
+  "curly": true,
+  "devel": true,
+  "eqeqeq": true,
+  "strict": true,
+  "undef": true,
+  "unused": false,
+  "browser": true,
+  "predef": {
+    "$": true,
+    "angular": true,
+    "beforeEach": true,
+    "define": true,
+    "describe": true,
+    "expect": true,
+    "global": true,
+    "inject": true,
+    "it": true,
+    "jasmine": true,
+    "module": true,
+    "requirejs": true,
+    "require": true
+  }
+}
+

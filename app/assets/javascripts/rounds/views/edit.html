@@ -1,0 +1,217 @@
+<div layout="row">
+  <div layout="column" flex="25">
+    <md-card>
+      <md-toolbar>
+        <h2 class="md-toolbar-tools" layout-align="space-between center">
+          <span>Round Details</span>
+        </h2>
+      </md-toolbar>
+      <md-card-content>
+        <md-autocomplete
+            md-selected-item="selectedCourse"
+            md-search-text="searchText"
+            md-items="course in courseSearch(searchText)"
+            md-item-text="course.name"
+            placeholder="Select Course">
+          <span md-highlight-text="searchText">
+            {{ course.name }} - {{ course.city }}, {{ course.state }}
+          </span>
+        </md-autocomplete>
+        <md-divider ng-if="round.course" class="mt++"></md-divider>
+        <md-radio-group ng-if="round.course" ng-model="round.holeSet">
+          <md-radio-button ng-repeat="holeSet in holeSets" ng-value="holeSet" ng-disabled="readOnly">
+            {{ holeSet.title }}
+          </md-radio-button>
+        </md-radio-group>
+        <md-divider ng-if="round.course"></md-divider>
+        <md-radio-group ng-if="round.course" ng-model="round.rating">
+          <md-radio-button ng-repeat="rating in round.course.ratings" ng-value="rating" ng-disabled="readOnly">
+            {{ rating.teeName }}
+          </md-radio-button>
+        </md-radio-group>
+        <md-divider ng-if="round.rating"></md-divider>
+        <date-time-picker ng-if="round.rating" label="Date/Time" value="round.timeDate" format="dddd, MMMM Do YYYY"></date-time-picker>
+        <md-checkbox ng-model="round.official" ng-show="round.time" ng-disabled="readOnly" aria-label="Official Round">
+          Official Round
+        </md-checkbox>
+        <md-checkbox ng-model="round.hasCustomHandicap" ng-show="round.timeDate" ng-disabled="readOnly" aria-label="Custom Handicap">
+          Custom Handicap
+        </md-checkbox>
+        <md-input-container ng-if="round.hasCustomHandicap" class="mh++">
+          <label>Custom Handicap</label>
+          <input ng-model="round.handicapOverride" ng-disabled="readOnly" type="number" min="-10" max="50">
+        </md-input-container>
+        <md-button ng-if="!readOnly && round.rating" ng-click="submitRound(round)" class="md-accent md-raised mt++">Sign Card</md-button>
+        <md-button ng-if="readOnly" ng-click="amendRound()" class="md-accent md-raised mt++">Amend</md-button>
+        <md-button ng-if="readOnly && round.id" ng-click="deleteRound(round, $event)" class="md-warn md-raised mt++">Delete</md-button>
+      </md-card-content>
+    </md-card>
+  </div>
+  <div layout="column" flex="75" ng-if="round.rating">
+    <md-card ng-if="round.holeSet.holeStart == 1">
+      <md-toolbar>
+        <h2 class="md-toolbar-tools">
+          <span>Front Scorecard</span>
+        </h2>
+      </md-toolbar>
+      <md-card-content>
+        <div layout="row">
+          <table layout-fill>
+            <thead>
+              <tr>
+                <th class="text-left">
+                  <strong>Hole</strong>
+                </th>
+                <th class="text-center" ng-repeat="holeRating in round.rating.holeRatings | orderBy: 'number' | limitTo: 9">
+                  <strong>{{ holeRating.number }}</strong>
+                </th>
+                <th class="text-center">
+                  <strong>Out</strong>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <strong>Par</strong>
+                </td>
+                <td class="text-center" ng-repeat="holeRating in round.rating.holeRatings | orderBy: 'number' | limitTo: 9">
+                  <md-input-container class="course-input">
+                    <input ng-model="holeRating.par" type="number" min="3" max="6" disabled>
+                  </md-input-container>
+                </td>
+                <td class="text-center">
+                  <span>{{ round.frontPar }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Score</strong></td>
+                <td class="text-center" ng-repeat="n in [1,9] | range">
+                  <md-input-container class="course-input">
+                    <input ng-disabled="readOnly" class="text-center" type="number" min="1" max="12" ng-model="round.holeScores[n-round.holeSet.holeStart].score">
+                  </md-input-container>
+                </td>
+                <td class="text-center">{{ round.frontScore }}</td>
+              </tr>
+              <tr>
+                <td><strong>Putts</strong></td>
+                <td class="text-center" ng-repeat="n in [1,9] | range">
+                  <md-input-container class="course-input">
+                    <input ng-disabled="readOnly" class="text-center" type="number" min="0" max="5" ng-model="round.holeScores[n-round.holeSet.holeStart].putts">
+                  </md-input-container>
+                </td>
+                <td class="text-center">{{ round.frontPutts }}</td>
+              </tr>
+              <tr>
+                <td><strong>Penalty Strokes</strong></td>
+                <td class="text-center" ng-repeat="n in [1,9] | range">
+                  <md-input-container class="course-input">
+                    <input ng-disabled="readOnly" class="text-center" type="number" min="0" max="10" ng-model="round.holeScores[n-round.holeSet.holeStart].penaltyStrokes">
+                  </md-input-container>
+                </td>
+                <td class="text-center">{{ round.frontPenaltyStrokes }}</td>
+              </tr>
+              <tr>
+                <td><strong>Fairway Hit</strong></td>
+                <td class="text-center" ng-repeat="n in [1,9] | range">
+                  <md-checkbox ng-model="round.holeScores[n-round.holeSet.holeStart].fairwayHit" ng-if="round.rating.holeRatings[n-1].par > 3" ng-disabled="readOnly"></md-checkbox>
+                </td>
+                <td class="text-center">{{ round.frontFairwaysHitPercent }}%</td>
+              </tr>
+              <tr>
+                <td><strong>GIR</strong></td>
+                <td class="text-center" ng-repeat="n in [1,9] | range">
+                  <md-checkbox ng-model="round.holeScores[n-round.holeSet.holeStart].gir" ng-disabled="readOnly"></md-checkbox>
+                </td>
+                <td class="text-center">{{ round.frontGIRPercent }}%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </md-card-content>
+    </md-card>
+
+    <md-card ng-if="round.holeSet.holeEnd == 18">
+      <md-toolbar>
+        <h2 class="md-toolbar-tools">
+          <span>Back Scorecard</span>
+        </h2>
+      </md-toolbar>
+      <md-card-content>
+        <div layout="row">
+          <table layout-fill>
+            <thead>
+              <tr>
+                <th class="text-left">
+                  <strong>Hole</strong>
+                </th>
+                <th class="text-center" ng-repeat="holeRating in round.rating.holeRatings | orderBy: 'number' | limitTo: 18 | limitTo: -9">
+                  <strong>{{ holeRating.number }}</strong>
+                </th>
+                <th class="text-center">
+                  <strong>Out</strong>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <strong>Par</strong>
+                </td>
+                <td class="text-center" ng-repeat="holeRating in round.rating.holeRatings | orderBy: 'number' | limitTo: 18 | limitTo: -9">
+                  <md-input-container class="course-input">
+                    <input ng-model="holeRating.par" type="number" min="3" max="6" disabled>
+                  </md-input-container>
+                </td>
+                <td class="text-center">
+                  <span>{{ round.backPar }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Score</strong></td>
+                <td class="text-center" ng-repeat="n in [10,18] | range">
+                  <md-input-container class="course-input">
+                    <input ng-disabled="readOnly" class="text-center" type="number" min="1" max="12" ng-model="round.holeScores[n-round.holeSet.holeStart].score">
+                  </md-input-container>
+                </td>
+                <td class="text-center">{{ round.backScore }}</td>
+              </tr>
+              <tr>
+                <td><strong>Putts</strong></td>
+                <td class="text-center" ng-repeat="n in [10,18] | range">
+                  <md-input-container class="course-input">
+                    <input ng-disabled="readOnly" class="text-center" type="number" min="0" max="5" ng-model="round.holeScores[n-round.holeSet.holeStart].putts">
+                  </md-input-container>
+                </td>
+                <td class="text-center">{{ round.backPutts }}</td>
+              </tr>
+              <tr>
+                <td><strong>Penalty Strokes</strong></td>
+                <td class="text-center" ng-repeat="n in [10,18] | range">
+                  <md-input-container class="course-input">
+                    <input ng-disabled="readOnly" class="text-center" type="number" min="0" max="10" ng-model="round.holeScores[n-round.holeSet.holeStart].penaltyStrokes">
+                  </md-input-container>
+                </td>
+                <td class="text-center">{{ round.backPenaltyStrokes }}</td>
+              </tr>
+              <tr>
+                <td><strong>Fairway Hit</strong></td>
+                <td class="text-center" ng-repeat="n in [10,18] | range">
+                  <md-checkbox ng-model="round.holeScores[n-round.holeSet.holeStart].fairwayHit" ng-if="round.rating.holeRatings[n-1].par > 3" ng-disabled="readOnly"></md-checkbox>
+                </td>
+                <td class="text-center">{{ round.backFairwaysHitPercent }}%</td>
+              </tr>
+              <tr>
+                <td><strong>GIR</strong></td>
+                <td class="text-center" ng-repeat="n in [10,18] | range">
+                  <md-checkbox ng-model="round.holeScores[n-round.holeSet.holeStart].gir" ng-disabled="readOnly"></md-checkbox>
+                </td>
+                <td class="text-center">{{ round.backGIRPercent }}%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </md-card-content>
+    </md-card>
+  </div>
+</div>

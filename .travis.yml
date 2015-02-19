@@ -1,0 +1,15 @@
+language: scala
+scala:
+   - 2.11.5
+addons:
+  postgresql: "9.4"
+before_install:
+  - sudo apt-get install -qq postgresql-contrib
+before_script:
+  - psql -c "create user dogleg with password 'dogleg'" -U postgres
+  - psql -c "alter user dogleg with superuser" -U postgres
+  - psql -c "create database doglegtest with owner dogleg" -U postgres
+  - psql -c "alter schema public owner to dogleg" -U postgres doglegtest
+  - psql -c "grant all privileges on database doglegtest to dogleg" -U postgres
+script: "sbt clean coverage test"
+after_success: "sbt coverageReport codacyCoverage"

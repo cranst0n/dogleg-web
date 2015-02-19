@@ -1,0 +1,31 @@
+<md-card>
+  <md-toolbar>
+    <h2 class="md-toolbar-tools">
+      <span>Profile</span>
+    </h2>
+  </md-toolbar>
+  <md-card-content>
+    <p>
+      <form name="profileForm" ng-enter="updateProfile(user)">
+
+        <md-input-container>
+          <label>Hometown</label>
+          <input ng-model="user.profile.home" type="text">
+        </md-input-container>
+
+        <md-autocomplete
+            md-selected-item="user.profile.favoriteCourse"
+            md-search-text="searchText"
+            md-items="course in courseSearch(searchText)"
+            md-item-text="course.name"
+            placeholder="Favorite Course">
+          <span md-highlight-text="searchText">{{ course.name }}</span>
+        </md-autocomplete>
+
+        <h3 ng-show="updateProfileError">{{ updateProfileError.message }}</h3>
+
+        <md-button ng-click="updateProfile(user)" ng-disabled="profileForm.$invalid" class="md-primary md-raised mt++">Update Profile</md-button>
+      </form>
+    </p>
+  </md-card-content>
+</md-card>

@@ -1,0 +1,21 @@
+<md-card>
+  <md-toolbar>
+    <h2 class="md-toolbar-tools">
+      <span>Change Avatar</span>
+    </h2>
+  </md-toolbar>
+  <md-card-content>
+    <p>
+      <form name="changeAvatarForm" ng-enter="changeAvatar(avatar.file)">
+
+        <md-input-container>
+          <input type="file" fileread="inputFile">
+        </md-input-container>
+
+        <h3 ng-show="updateProfileError">{{ avatarChangeError.data.message }}</h3>
+
+        <md-button ng-click="submitAvatar()" ng-disabled="!avatarFile" class="md-primary md-raised mt++">Change Avatar</md-button>
+      </form>
+    </p>
+  </md-card-content>
+</md-card>

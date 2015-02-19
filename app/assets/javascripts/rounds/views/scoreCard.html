@@ -1,0 +1,86 @@
+<table class="data-table score-card">
+  <thead>
+    <tr>
+      <th><strong>Hole</strong></th>
+      <th ng-show="round.holeSet.holeStart == 1" class="text-center" ng-repeat="n in [1,9] | range"><strong>{{ n }}</strong></th>
+      <th ng-show="round.holeSet.holeStart == 1" class="text-center"><strong>Out</strong></th>
+      <th ng-show="round.holeSet.holeEnd == 18" class="text-center" ng-repeat="n in [10,18] | range"><strong>{{ n }}</strong></th>
+      <th ng-show="round.holeSet.holeEnd == 18" class="text-center"><strong>In</strong></th>
+      <th ng-show="round.numHoles > 9" class="text-center"><strong>Total</strong></th>
+    </tr>
+    <tr>
+      <th><strong>Par</strong></th>
+      <th ng-show="round.holeSet.holeStart == 1" class="text-center" ng-repeat="n in [1,9] | range">{{ round.rating.holeRatings[n-1].par }}</th>
+      <th ng-show="round.holeSet.holeStart == 1" class="text-center"><strong>{{ round.frontPar }}</strong></th>
+      <th ng-show="round.holeSet.holeEnd == 18" class="text-center" ng-repeat="n in [10,18] | range">{{ round.rating.holeRatings[n-1].par }}</th>
+      <th ng-show="round.holeSet.holeEnd == 18" class="text-center"><strong>{{ round.backPar }}</strong></th>
+      <th ng-show="round.numHoles > 9" class="text-center"><strong>{{ round.frontPar + round.backPar }}</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Score</strong></td>
+      <td ng-show="round.holeSet.holeStart == 1" class="text-center" ng-repeat="n in [1,9] | range">
+        <span>{{ round.holeScores[n-round.holeSet.holeStart].score }}</span>
+      </td>
+      <td ng-show="round.holeSet.holeStart == 1" class="text-center"><strong>{{ round.frontScore }}</strong></td>
+      <td ng-show="round.holeSet.holeEnd == 18" class="text-center" ng-repeat="n in [10,18] | range">
+        <span>{{ round.holeScores[n-round.holeSet.holeStart].score }}</span>
+      </td>
+      <td ng-show="round.holeSet.holeEnd == 18" class="text-center"><strong>{{ round.backScore }}</strong></td>
+      <td ng-show="round.numHoles > 9" class="text-center"><strong>{{ round.score }}</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Putts</strong></td>
+      <td ng-show="round.holeSet.holeStart == 1" class="text-center" ng-repeat="n in [1,9] | range">
+        <span>{{ round.holeScores[n-round.holeSet.holeStart].putts }}</span>
+      </td>
+      <td ng-show="round.holeSet.holeStart == 1" class="text-center"><strong>{{ round.frontPutts }}</strong></td>
+      <td ng-show="round.holeSet.holeEnd == 18" class="text-center" ng-repeat="n in [10,18] | range">
+        <span>{{ round.holeScores[n-round.holeSet.holeStart].putts }}</span>
+      </td>
+      <td ng-show="round.holeSet.holeEnd == 18" class="text-center"><strong>{{ round.backPutts }}</strong></td>
+      <td ng-show="round.numHoles > 9" class="text-center"><strong>{{ round.frontPutts + round.backPutts }}</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Penalty Strokes</strong></td>
+      <td ng-show="round.holeSet.holeStart == 1" class="text-center" ng-repeat="n in [1,9] | range">
+        <span>{{ round.holeScores[n-round.holeSet.holeStart].penaltyStrokes }}</span>
+      </td>
+      <td ng-show="round.holeSet.holeStart == 1" class="text-center"><strong>{{ round.frontPenaltyStrokes }}</strong></td>
+      <td ng-show="round.holeSet.holeEnd == 18" class="text-center" ng-repeat="n in [10,18] | range">
+        <span>{{ round.holeScores[n-round.holeSet.holeStart].penaltyStrokes }}</span>
+      </td>
+      <td ng-show="round.holeSet.holeEnd == 18" class="text-center"><strong>{{ round.backPenaltyStrokes }}</strong></td>
+      <td ng-show="round.numHoles > 9" class="text-center"><strong>{{ round.frontPenaltyStrokes + round.backPenaltyStrokes }}</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Fairway Hit</strong></td>
+      <td ng-show="round.holeSet.holeStart == 1" class="text-center" ng-repeat="n in [1,9] | range">
+        <i ng-if="round.holeScores[n-round.holeSet.holeStart].fairwayHit && round.rating.holeRatings[n-1].par > 3" class="icon icon--green icon--flat mdi mdi-check"></i>
+        <i ng-if="!round.holeScores[n-round.holeSet.holeStart].fairwayHit && round.rating.holeRatings[n-1].par > 3" class="icon icon--red icon--flat mdi mdi-close"></i>
+      </td>
+      <td ng-show="round.holeSet.holeStart == 1" class="text-center"><strong>{{ round.frontFairwaysHitPercent }}%</strong></td>
+      <td ng-show="round.holeSet.holeEnd == 18" class="text-center" ng-repeat="n in [10,18] | range">
+        <i ng-if="round.holeScores[n-round.holeSet.holeStart].fairwayHit && round.rating.holeRatings[n-1].par > 3" class="icon icon--green icon--flat mdi mdi-check"></i>
+        <i ng-if="!round.holeScores[n-round.holeSet.holeStart].fairwayHit && round.rating.holeRatings[n-1].par > 3" class="icon icon--red icon--flat mdi mdi-close"></i>
+      </td>
+      <td ng-show="round.holeSet.holeEnd == 18" class="text-center"><strong>{{ round.backFairwaysHitPercent }}%</strong></td>
+      <td ng-show="round.numHoles > 9" class="text-center"><strong>{{ round.fairwaysHitPercent }}%</strong></td>
+    </tr>
+    <tr>
+      <td><strong>GIR</strong></td>
+      <td ng-show="round.holeSet.holeStart == 1" class="text-center" ng-repeat="n in [1,9] | range">
+        <i ng-if="round.holeScores[n-round.holeSet.holeStart].gir" class="icon icon--green icon--flat mdi mdi-check"></i>
+        <i ng-if="!round.holeScores[n-round.holeSet.holeStart].gir" class="icon icon--red icon--flat mdi mdi-close"></i>
+      </td>
+      <td ng-show="round.holeSet.holeStart == 1" class="text-center"><strong>{{ round.frontGIRPercent }}%</strong></td>
+      <td ng-show="round.holeSet.holeEnd == 18" class="text-center" ng-repeat="n in [10,18] | range">
+        <i ng-if="round.holeScores[n-round.holeSet.holeStart].gir" class="icon icon--green icon--flat mdi mdi-check"></i>
+        <i ng-if="!round.holeScores[n-round.holeSet.holeStart].gir" class="icon icon--red icon--flat mdi mdi-close"></i>
+      </td>
+      <td ng-show="round.holeSet.holeEnd == 18" class="text-center"><strong>{{ round.backGIRPercent }}%</strong></td>
+      <td ng-show="round.numHoles > 9" class="text-center"><strong>{{ round.girPercent }}%</strong></td>
+    </tr>
+  </tbody>
+</table>

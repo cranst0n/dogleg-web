@@ -1,0 +1,25 @@
+<md-dialog aria-label="Login Dialog" ng-controller="LoginCtrl">
+  <md-toolbar>
+    <h2 class="md-toolbar-tools">
+      <span>Login</span>
+    </h2>
+  </md-toolbar>
+  <md-content>
+    <form name="loginForm" ng-enter="login(credentials)">
+      <md-input-container>
+        <label>Username</label>
+        <input ng-model="credentials.username" type="text">
+      </md-input-container>
+      <md-input-container>
+        <label>Password</label>
+        <input ng-model="credentials.password" type="password">
+      </md-input-container>
+      <h3 ng-show="loginError">{{ loginError.data.message }}</h3>
+    </form>
+  </md-content>
+
+  <div class="md-actions" layout="row">
+    <md-button ng-click="login(credentials)" ng-disabled="loginForm.$invalid" class="md-primary md-raised">Login</md-button>
+    <md-button ng-click="close()" class="md-warn">Cancel</md-button>
+  </div>
+</md-dialog>

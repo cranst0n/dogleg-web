@@ -1,0 +1,33 @@
+@()<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title data-ng-bind="pageTitle"></title>
+
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+
+    <link rel="stylesheet" href="https://rawgit.com/angular/bower-material/master/angular-material.css">
+    <link rel="stylesheet" href="https://cdn.rawgit.com/SimeonC/md-date-time/v0.0.5/dist/md-date-time.css">
+
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/materialdesignicons.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+
+  </head>
+  <body layout-fill ng-cloak>
+    <section ng-controller="HeaderCtrl" layout="row" flex layout-fill>
+      <md-content flex>
+        <navbar></navbar>
+        <div layout="column" layout-fill layout-align="center center">
+          <div id="view-container" class="container mv++" ng-cloak flex layout-fill>
+            <div data-ng-view></div>
+          </div>
+        </div>
+      </md-content>
+    </section>
+
+    <script data-main="@routes.Assets.versioned("javascripts/main.js")" type="text/javascript" src="@routes.Assets.versioned("lib/requirejs/require.js")"></script>
+  </body>
+</html>

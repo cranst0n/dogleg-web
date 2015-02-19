@@ -1,0 +1,74 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+###########
+# General #
+###########
+GET     /                       @controllers.Application.index
+GET     /jsroutes.js            @controllers.Application.jsRoutes()
+
+##################
+# Authentication #
+##################
+POST    /login                  @controllers.Authentication.login()
+POST    /logout                 @controllers.Authentication.logout()
+GET     /authuser               @controllers.Authentication.authUser()
+GET     /authadmin              @controllers.Authentication.authAdmin()
+
+#########
+# Users #
+#########
+GET     /users/:id              @controllers.Users.user(id: Long)
+POST    /users                  @controllers.Users.createUser()
+PUT     /users/:id              @controllers.Users.updateUser(id: Long)
+PUT     /users/:id/profile      @controllers.Users.updateProfile(id: Long)
+PUT     /users/:id/password     @controllers.Users.changePassword(id: Long)
+PUT     /users/:id/avatar       @controllers.Users.changeAvatar(id: Long)
+DELETE  /users/:id              @controllers.Users.deleteUser(id: Long)
+
+###################
+# Course Requests #
+###################
+POST    /courserequests         @controllers.RequestedCourses.createRequest()
+GET     /courserequests         @controllers.RequestedCourses.list(num: Int ?= 20, offset: Int ?= 0)
+GET     /courserequests/user    @controllers.RequestedCourses.forUser(num: Int ?= 20, offset: Int ?= 0)
+GET     /courserequests/:id     @controllers.RequestedCourses.info(id: Long)
+PUT     /courserequests/:id/fulfill/:courseId    @controllers.RequestedCourses.fulfill(id: Long, courseId: Long)
+DELETE  /courserequests/:id     @controllers.RequestedCourses.deleteRequest(id: Long)
+
+###########
+# Courses #
+###########
+POST    /courses                @controllers.Courses.createCourse()
+GET     /courses/user           @controllers.Courses.recentForUser
+GET     /courses                @controllers.Courses.list(num: Int ?= 20, offset: Int ?= 0, approved: Boolean ?= true)
+GET     /courses/search         @controllers.Courses.search(searchText: String, num: Int ?= 20, offset: Int ?= 0)
+GET     /courses/:id            @controllers.Courses.info(id: Long)
+GET     /courses/raw/:id        @controllers.Courses.raw(id: Long)
+PUT     /courses/approve        @controllers.Courses.approve
+POST    /courses/parseFile      @controllers.Courses.parseFile
+POST    /courses/importFiles    @controllers.Courses.importFiles
+POST    /courses/lint           @controllers.Courses.lint
+
+##########
+# Rounds #
+##########
+POST    /rounds                 @controllers.Rounds.createRound()
+PUT     /rounds                 @controllers.Rounds.updateRound()
+GET     /rounds                 @controllers.Rounds.list(num: Int ?= 20, offset: Int ?= 0)
+GET     /rounds/:id             @controllers.Rounds.info(id: Long)
+DELETE  /rounds/:id             @controllers.Rounds.deleteRound(id: Long)
+
+##########
+# Images #
+##########
+GET     /image/avatar/:id           @controllers.Images.avatar(id: Long)
+GET     /image/raw/:id              @controllers.Images.raw(id: Long)
+
+#########################################################################
+# Static                                                                #
+#  Map static resources from the /public folder to the /assets URL path #
+#########################################################################
+
+GET     /assets/*file           controllers.Assets.versioned(path="/public", file: Asset)

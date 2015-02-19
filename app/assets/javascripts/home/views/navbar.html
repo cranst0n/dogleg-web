@@ -1,0 +1,16 @@
+<md-toolbar>
+  <h2 class="md-toolbar-tools" ng-cloak layout-align="space-between center">
+    Dogleg
+    <a ng-show="user" href="#/settings">
+      <img ng-show="user.profile.avatar.id" ng-src="image/avatar/{{ user.profile.avatar.id }}">
+    </a>
+    <md-button ng-show="user" ng-click="logout()" class="md-warn md-raised">
+      Logout
+    </md-button>
+    <md-button ng-hide="user" ng-click="showLogin($event)" class="md-accent md-raised">Login</md-button>
+  </h2>
+</md-toolbar>
+<md-tabs md-selected="activeTab" md-stretch-tabs="auto" class="md-primary">
+  <md-tab ng-repeat="tab in tabs | filter: tabFilter" ng-click="tabClick($index)" label="{{ tab.heading }}">
+  </md-tab>
+</md-tabs>

@@ -1,0 +1,16 @@
+<div layout="column" layout-fill flex>
+  <md-card>
+    <md-toolbar>
+      <h2 class="md-toolbar-tools">
+        <span>Course KML / JSON File</span>
+      </h2>
+    </md-toolbar>
+    <md-card-content>
+      <md-input-container>
+        <input type="file" fileread="inputFile">
+      </md-input-container>
+      <md-button ng-click="submitCourse(course)" ng-disabled="!valid || course.ratings.length === 0" class="md-accent md-raised">Submit Course</md-button>
+    </md-card-content>
+  </md-card>
+  <course-card ng-if="course" course="course" read-only="false"></course-card>
+</div>

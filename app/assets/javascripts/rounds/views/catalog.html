@@ -1,0 +1,36 @@
+<div layout="row" layout-align="center start">
+  <div layout="column" flex="60">
+    <md-card>
+      <md-toolbar>
+        <h2 class="md-toolbar-tools" layout-align="space-between center">
+          <span>Your Rounds</span>
+          <md-button ng-click="newRound()" class="md-accent md-raised">
+            New Round
+          </md-button>
+        </h2>
+      </md-toolbar>
+      <md-card-content>
+        <md-progress-linear ng-show="loading" md-mode="indeterminate"></md-progress-linear>
+        <md-list>
+          <md-item ng-repeat="round in rounds">
+            <md-item-content>
+              <div class="md-tile-right">
+                <h2>{{ round.score }}</h2>
+              </div>
+              <div class="md-tile-content">
+                <h3>{{ round.course.name }}</h3>
+                <p class="text-muted">{{ round.timeAgo }}</p>
+              </div>
+              <div class="md-tile-right">
+                <md-button ng-click="showRoundDetails(round)" class="md-primary" aria-label="Round Information">
+                  <i class="mdi mdi-chevron-right mdi--xl"></i>
+                </md-button>
+              </div>
+            </md-item-content>
+            <md-divider ng-if="!$last"></md-divider>
+          </md-item>
+        </md-list>
+      </md-card-content>
+    </md-card>
+  </div>
+</div>

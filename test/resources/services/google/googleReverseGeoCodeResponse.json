@@ -1,0 +1,481 @@
+{
+  "results": [
+    {
+      "address_components": [
+        {
+          "long_name": "77",
+          "short_name": "77",
+          "types": [
+            "street_number"
+          ]
+        },
+        {
+          "long_name": "Bay State Road",
+          "short_name": "Bay State Rd",
+          "types": [
+            "route"
+          ]
+        },
+        {
+          "long_name": "Rehoboth",
+          "short_name": "Rehoboth",
+          "types": [
+            "locality",
+            "political"
+          ]
+        },
+        {
+          "long_name": "Bristol County",
+          "short_name": "Bristol County",
+          "types": [
+            "administrative_area_level_2",
+            "political"
+          ]
+        },
+        {
+          "long_name": "Massachusetts",
+          "short_name": "MA",
+          "types": [
+            "administrative_area_level_1",
+            "political"
+          ]
+        },
+        {
+          "long_name": "United States",
+          "short_name": "US",
+          "types": [
+            "country",
+            "political"
+          ]
+        },
+        {
+          "long_name": "02769",
+          "short_name": "02769",
+          "types": [
+            "postal_code"
+          ]
+        }
+      ],
+      "formatted_address": "77 Bay State Road, Rehoboth, MA 02769, USA",
+      "geometry": {
+        "location": {
+          "lat": 41.84543,
+          "lng": -71.23992199999999
+        },
+        "location_type": "ROOFTOP",
+        "viewport": {
+          "northeast": {
+            "lat": 41.8467789802915,
+            "lng": -71.23857301970848
+          },
+          "southwest": {
+            "lat": 41.8440810197085,
+            "lng": -71.2412709802915
+          }
+        }
+      },
+      "types": [
+        "street_address"
+      ]
+    },
+    {
+      "address_components": [
+        {
+          "long_name": "Rehoboth",
+          "short_name": "Rehoboth",
+          "types": [
+            "locality",
+            "political"
+          ]
+        },
+        {
+          "long_name": "Bristol County",
+          "short_name": "Bristol County",
+          "types": [
+            "administrative_area_level_2",
+            "political"
+          ]
+        },
+        {
+          "long_name": "Massachusetts",
+          "short_name": "MA",
+          "types": [
+            "administrative_area_level_1",
+            "political"
+          ]
+        },
+        {
+          "long_name": "United States",
+          "short_name": "US",
+          "types": [
+            "country",
+            "political"
+          ]
+        }
+      ],
+      "formatted_address": "Rehoboth, MA, USA",
+      "geometry": {
+        "bounds": {
+          "northeast": {
+            "lat": 41.911361,
+            "lng": -71.18749609999999
+          },
+          "southwest": {
+            "lat": 41.7746688,
+            "lng": -71.30329689999999
+          }
+        },
+        "location": {
+          "lat": 41.8470056,
+          "lng": -71.2393933
+        },
+        "location_type": "APPROXIMATE",
+        "viewport": {
+          "northeast": {
+            "lat": 41.911361,
+            "lng": -71.18749609999999
+          },
+          "southwest": {
+            "lat": 41.7746688,
+            "lng": -71.30329689999999
+          }
+        }
+      },
+      "types": [
+        "locality",
+        "political"
+      ]
+    },
+    {
+      "address_components": [
+        {
+          "long_name": "02769",
+          "short_name": "02769",
+          "types": [
+            "postal_code"
+          ]
+        },
+        {
+          "long_name": "Rehoboth",
+          "short_name": "Rehoboth",
+          "types": [
+            "locality",
+            "political"
+          ]
+        },
+        {
+          "long_name": "Bristol County",
+          "short_name": "Bristol County",
+          "types": [
+            "administrative_area_level_2",
+            "political"
+          ]
+        },
+        {
+          "long_name": "Massachusetts",
+          "short_name": "MA",
+          "types": [
+            "administrative_area_level_1",
+            "political"
+          ]
+        },
+        {
+          "long_name": "United States",
+          "short_name": "US",
+          "types": [
+            "country",
+            "political"
+          ]
+        }
+      ],
+      "formatted_address": "Rehoboth, MA 02769, USA",
+      "geometry": {
+        "bounds": {
+          "northeast": {
+            "lat": 41.912244,
+            "lng": -71.1867879
+          },
+          "southwest": {
+            "lat": 41.77318400000001,
+            "lng": -71.30071889999999
+          }
+        },
+        "location": {
+          "lat": 41.8331408,
+          "lng": -71.26366299999999
+        },
+        "location_type": "APPROXIMATE",
+        "viewport": {
+          "northeast": {
+            "lat": 41.912244,
+            "lng": -71.1867879
+          },
+          "southwest": {
+            "lat": 41.77318400000001,
+            "lng": -71.30071889999999
+          }
+        }
+      },
+      "types": [
+        "postal_code"
+      ]
+    },
+    {
+      "address_components": [
+        {
+          "long_name": "Bristol County",
+          "short_name": "Bristol County",
+          "types": [
+            "administrative_area_level_2",
+            "political"
+          ]
+        },
+        {
+          "long_name": "Massachusetts",
+          "short_name": "MA",
+          "types": [
+            "administrative_area_level_1",
+            "political"
+          ]
+        },
+        {
+          "long_name": "United States",
+          "short_name": "US",
+          "types": [
+            "country",
+            "political"
+          ]
+        }
+      ],
+      "formatted_address": "Bristol County, MA, USA",
+      "geometry": {
+        "bounds": {
+          "northeast": {
+            "lat": 42.0956989,
+            "lng": -70.8158182
+          },
+          "southwest": {
+            "lat": 41.481308,
+            "lng": -71.3816999
+          }
+        },
+        "location": {
+          "lat": 41.7938406,
+          "lng": -71.1448516
+        },
+        "location_type": "APPROXIMATE",
+        "viewport": {
+          "northeast": {
+            "lat": 42.0956989,
+            "lng": -70.8158182
+          },
+          "southwest": {
+            "lat": 41.481308,
+            "lng": -71.3816999
+          }
+        }
+      },
+      "types": [
+        "administrative_area_level_2",
+        "political"
+      ]
+    },
+    {
+      "address_components": [
+        {
+          "long_name": "プロビデンス＝フォール・リバー＝ワーウィック",
+          "short_name": "プロビデンス＝フォール・リバー＝ワーウィック",
+          "types": [
+            "political"
+          ]
+        },
+        {
+          "long_name": "United States",
+          "short_name": "US",
+          "types": [
+            "country",
+            "political"
+          ]
+        }
+      ],
+      "formatted_address": "United States, プロビデンス＝フォール・リバー＝ワーウィック",
+      "geometry": {
+        "bounds": {
+          "northeast": {
+            "lat": 42.135804,
+            "lng": -71.007485
+          },
+          "southwest": {
+            "lat": 41.33099199999999,
+            "lng": -71.80322199999999
+          }
+        },
+        "location": {
+          "lat": 41.765776,
+          "lng": -71.6673352
+        },
+        "location_type": "APPROXIMATE",
+        "viewport": {
+          "northeast": {
+            "lat": 42.135804,
+            "lng": -71.007485
+          },
+          "southwest": {
+            "lat": 41.33099199999999,
+            "lng": -71.80322199999999
+          }
+        }
+      },
+      "types": [
+        "political"
+      ]
+    },
+    {
+      "address_components": [
+        {
+          "long_name": "プロビデンス＝ニュー・ベッドフォード＝フォール・リバー",
+          "short_name": "プロビデンス＝ニュー・ベッドフォード＝フォール・リバー",
+          "types": [
+            "political"
+          ]
+        },
+        {
+          "long_name": "United States",
+          "short_name": "US",
+          "types": [
+            "country",
+            "political"
+          ]
+        }
+      ],
+      "formatted_address": "United States, プロビデンス＝ニュー・ベッドフォード＝フォール・リバー",
+      "geometry": {
+        "bounds": {
+          "northeast": {
+            "lat": 42.095699,
+            "lng": -70.82091799999999
+          },
+          "southwest": {
+            "lat": 41.146339,
+            "lng": -71.86277199999999
+          }
+        },
+        "location": {
+          "lat": 41.8563438,
+          "lng": -71.2874209
+        },
+        "location_type": "APPROXIMATE",
+        "viewport": {
+          "northeast": {
+            "lat": 42.095699,
+            "lng": -70.82091799999999
+          },
+          "southwest": {
+            "lat": 41.146339,
+            "lng": -71.86277199999999
+          }
+        }
+      },
+      "types": [
+        "political"
+      ]
+    },
+    {
+      "address_components": [
+        {
+          "long_name": "Massachusetts",
+          "short_name": "MA",
+          "types": [
+            "administrative_area_level_1",
+            "political"
+          ]
+        },
+        {
+          "long_name": "United States",
+          "short_name": "US",
+          "types": [
+            "country",
+            "political"
+          ]
+        }
+      ],
+      "formatted_address": "Massachusetts, USA",
+      "geometry": {
+        "bounds": {
+          "northeast": {
+            "lat": 42.88679,
+            "lng": -69.9279921
+          },
+          "southwest": {
+            "lat": 41.2390448,
+            "lng": -73.5081419
+          }
+        },
+        "location": {
+          "lat": 42.4072107,
+          "lng": -71.3824374
+        },
+        "location_type": "APPROXIMATE",
+        "viewport": {
+          "northeast": {
+            "lat": 42.88679,
+            "lng": -69.9279921
+          },
+          "southwest": {
+            "lat": 41.2390897,
+            "lng": -73.5081419
+          }
+        }
+      },
+      "types": [
+        "administrative_area_level_1",
+        "political"
+      ]
+    },
+    {
+      "address_components": [
+        {
+          "long_name": "United States",
+          "short_name": "US",
+          "types": [
+            "country",
+            "political"
+          ]
+        }
+      ],
+      "formatted_address": "United States",
+      "geometry": {
+        "bounds": {
+          "northeast": {
+            "lat": 29.3452067,
+            "lng": -90.90566229999999
+          },
+          "southwest": {
+            "lat": 29.321898,
+            "lng": -90.9247501
+          }
+        },
+        "location": {
+          "lat": 37.09024,
+          "lng": -95.712891
+        },
+        "location_type": "APPROXIMATE",
+        "viewport": {
+          "northeast": {
+            "lat": 49.38,
+            "lng": -66.94
+          },
+          "southwest": {
+            "lat": 25.82,
+            "lng": -124.39
+          }
+        }
+      },
+      "types": [
+        "country",
+        "political"
+      ]
+    }
+  ],
+  "status": "OK"
+}

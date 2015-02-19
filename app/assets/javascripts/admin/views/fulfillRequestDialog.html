@@ -1,0 +1,23 @@
+<md-dialog aria-label="Course Information" layout="column" class="m++" style="min-height: 400px;" flex>
+  <md-toolbar>
+    <h2 class="md-toolbar-tools">
+      <span>Fulfill Course Request</span>
+    </h2>
+  </md-toolbar>
+  <md-content flex>
+    <md-autocomplete
+        md-selected-item="selectedCourse"
+        md-search-text="searchText"
+        md-items="course in courseSearch(searchText)"
+        md-item-text="course.name"
+        placeholder="Favorite Course">
+      <span md-highlight-text="searchText">{{ course.name }} - {{ course.city }}, {{ course.state }}</span>
+    </md-autocomplete>
+
+  </md-content>
+  <div class="md-actions" layout="row">
+    <span flex></span>
+    <md-button ng-click="close()" class="md-warn">Cancel</md-button>
+    <md-button ng-click="fulfillRequest(request.id, selectedCourse.id)" class="md-primary md-raised">Fulfill</md-button>
+  </div>
+</md-dialog>

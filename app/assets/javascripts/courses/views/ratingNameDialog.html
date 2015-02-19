@@ -1,0 +1,20 @@
+<md-dialog aria-label="Rating Name Dialog">
+  <md-toolbar>
+    <h2 class="md-toolbar-tools">
+      <span>Enter Rating Name</span>
+    </h2>
+  </md-toolbar>
+  <md-content>
+    <form name="ratingNameForm" ng-enter="answer(ratingName)">
+      <md-input-container>
+        <label>Rating Name</label>
+        <input ng-model="ratingName" required>
+      </md-input-container>
+    </form>
+  </md-content>
+
+  <div class="md-actions" layout="row">
+    <md-button ng-click="answer(ratingName)" ng-disabled="loginForm.$invalid" class="md-primary md-raised">Ok</md-button>
+    <md-button ng-click="cancel()" class="md-warn">Cancel</md-button>
+  </div>
+</md-dialog>
