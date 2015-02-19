@@ -52,7 +52,7 @@ scalacOptions in ThisBuild ++= Seq(
 
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
 
-// pipelineStages := Seq(rjs, digest, gzip)
+pipelineStages := Seq(digest, gzip) // TODO: rjs stage breaks angular injection somewhere
 
 // RequireJS with sbt-rjs (https://github.com/sbt/sbt-rjs#sbt-rjs)
 // ~~~
