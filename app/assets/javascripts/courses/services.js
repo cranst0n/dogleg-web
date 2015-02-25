@@ -31,8 +31,11 @@ define(['angular', 'common'], function (angular) {
     }
 
     return {
-      list: function(num, offset) {
-        return playRoutes.controllers.Courses.list(num, offset, true).get();
+      list: function(location, num, offset, approved) {
+        approved = approved || true;
+        var lat = angular.isDefined(location) ? location.latitude : undefined;
+        var lon = angular.isDefined(location) ? location.longitude : undefined;
+        return playRoutes.controllers.Courses.list(lat, lon, num, offset, approved).get();
       },
       search: function(searchText, num, offset) {
         return playRoutes.controllers.Courses.search(searchText, num, offset).get();
@@ -44,7 +47,7 @@ define(['angular', 'common'], function (angular) {
         return playRoutes.controllers.Courses.recentForUser().get();
       },
       unapproved: function(num, offset) {
-        return playRoutes.controllers.Courses.list(num, offset, false).get();
+        return playRoutes.controllers.Courses.list(undefined, undefined, num, offset, false).get();
       },
       create: function(courseObject) {
         return playRoutes.controllers.Courses.createCourse().post(courseObject);

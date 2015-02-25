@@ -11,7 +11,7 @@ import DoglegPostgresDriver.simple._
 import Implicits._
 import Tables._
 
-import models.{ Course, Image }
+import models.{ Course, Image, LatLon }
 
 import services._
 
@@ -23,12 +23,18 @@ class CourseDAOSlick(implicit val injector: Injector)
   lazy val userDAO = inject[UserDAO]
   lazy val imageDAO = inject[ImageDAO]
 
-  override def list(num: Int = CourseDAO.DefaultListSize,
-    offset: Int = 0, approved: Boolean = true): List[Course] = {
+  override def list(location: Option[LatLon], num: Int, offset: Int,
+    approved: Boolean): List[Course] = {
 
     DB withSession { implicit session =>
-      courses.filter(_.approved === Option(approved)).drop(offset).take(num).
-        sortBy(_.id.asc).list.map(_.toCourse)
+
+      val sortedRows =
+        location.map { ll =>
+          courses.sortBy(_.location <-> LatLon.toVividPoint(ll))
+        }.getOrElse(courses.sortBy(_.id.asc))
+
+      sortedRows.filter(_.approved === Option(approved)).
+        drop(offset).take(num).list.map(_.toCourse)
     }
   }
 
@@ -38,8 +44,7 @@ class CourseDAOSlick(implicit val injector: Injector)
     }
   }
 
-  override def search(text: String, num: Int = CourseDAO.DefaultListSize,
-    offset: Int = 0): List[Course] = {
+  override def search(text: String, num: Int, offset: Int): List[Course] = {
 
     val sanitized =
       text.replaceAll("\\p{Punct}+", " ").replaceAll(" +", " ")
@@ -52,7 +57,7 @@ class CourseDAOSlick(implicit val injector: Injector)
               ilike '%${sanitized}%' or
             (name || ' ' || state || ' ' || city || ' ' || country)
               ilike '%${sanitized}%'
-          )
+          ) limit $num offset $offset
       """).list.map(_.toCourse)
     }
   }

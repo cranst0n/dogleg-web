@@ -5,6 +5,8 @@ import org.specs2.mutable.Specification
 
 import models.Course
 
+import services.CourseDAO
+
 import test.Helpers._
 
 object CourseDAOSlickSpec extends Specification with ThrownMessages {
@@ -74,12 +76,12 @@ object CourseDAOSlickSpec extends Specification with ThrownMessages {
 
       val dao = new CourseDAOSlick
 
-      dao.list() must beEmpty
+      dao.list(CourseDAO.DefaultListSize, 0) must beEmpty
 
       for(i <- 1 to 10) { dao.insert(approvedCourse) }
 
-      dao.list() must have size(10)
-      dao.list(4) must have size(4)
+      dao.list(CourseDAO.DefaultListSize, 0) must have size(10)
+      dao.list(4, 0) must have size(4)
 
       val paginated = dao.list(4,2)
       paginated must have size(4)
@@ -90,12 +92,12 @@ object CourseDAOSlickSpec extends Specification with ThrownMessages {
 
       val dao = new CourseDAOSlick
 
-      dao.unapproved() must beEmpty
+      dao.unapproved(CourseDAO.DefaultListSize, 0) must beEmpty
       for(i <- 1 to 3) { dao.insert(approvedCourse) }
-      dao.unapproved() must beEmpty
+      dao.unapproved(CourseDAO.DefaultListSize, 0) must beEmpty
 
       for(i <- 1 to 2) { dao.insert(unapprovedCourse) }
-      dao.unapproved() must have size(2)
+      dao.unapproved(CourseDAO.DefaultListSize, 0) must have size(2)
     }
 
     "approve an unapproved course" in DoglegTestApp { implicit module =>
@@ -104,25 +106,25 @@ object CourseDAOSlickSpec extends Specification with ThrownMessages {
 
       val unapproved = dao.insert(unapprovedCourse)
 
-      dao.unapproved() must have size(1)
+      dao.unapproved(CourseDAO.DefaultListSize, 0) must have size(1)
       dao.approve(
         unapproved.id.getOrElse(-1)) must beSome.which(_.approved == Some(true))
 
-      dao.unapproved() must beEmpty
+      dao.unapproved(CourseDAO.DefaultListSize, 0) must beEmpty
     }
 
     "search for courses" in DoglegTestApp { implicit module =>
 
       val dao = new CourseDAOSlick
 
-      val inserted = List("Alpha", "Bravo", "Charlie", "Johnny Bravo", "arlie").map { name =>
-        dao.insert(searchCourse(approvedCourse, name))
+      val insertedIds = List("Alpha", "Bravo", "Charlie", "Johnny Bravo", "arlie").map { name =>
+        dao.insert(searchCourse(approvedCourse, name)).id
       }
 
-      dao.search("alpha") must contain(inserted(0))
-      dao.search("Bravo") must contain(exactly(inserted(1), inserted(3)))
-      dao.search("arlie") must contain(exactly(inserted(2), inserted(4)))
-      dao.search("bogus") must beEmpty
+      dao.search("alpha", 10, 0).map(_.id) must contain(insertedIds(0))
+      dao.search("Bravo", 10, 0).map(_.id) must contain(exactly(insertedIds(1), insertedIds(3)))
+      dao.search("arlie", 10, 0).map(_.id) must contain(exactly(insertedIds(2), insertedIds(4)))
+      dao.search("bogus", 10, 0).map(_.id) must beEmpty
     }
   }
 

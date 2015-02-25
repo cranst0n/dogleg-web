@@ -33,7 +33,7 @@ object CoursesSpec extends PlaySpecification with ThrownMessages {
       val course2 = courseDAO.insert(PoquoyBrook.copy(approved = Some(true)))
 
       val ctrl = new Courses
-      val result = call(ctrl.list(10,0,true), FakeRequest())
+      val result = call(ctrl.list(None,None,10,0,true), FakeRequest())
       val jsonResult = contentAsJson(result)
 
       status(result) must be equalTo OK
@@ -47,7 +47,7 @@ object CoursesSpec extends PlaySpecification with ThrownMessages {
         }
       }
 
-      val offsetResult = call(ctrl.list(10,1,true), FakeRequest())
+      val offsetResult = call(ctrl.list(None,None,10,1,true), FakeRequest())
       val offsetJsonResult = contentAsJson(offsetResult)
 
       offsetJsonResult.validate[List[CourseSummary]] match {
@@ -118,7 +118,7 @@ object CoursesSpec extends PlaySpecification with ThrownMessages {
 
         implicit val module = mod
         val ctrl = new Courses
-        val result = call(ctrl.list(20,0,false), FakeRequest())
+        val result = call(ctrl.list(None,None,20,0,false), FakeRequest())
 
         status(result) must be equalTo OK
 
@@ -146,7 +146,7 @@ object CoursesSpec extends PlaySpecification with ThrownMessages {
 
         val ctrl = new Courses
 
-        contentAsJson(ctrl.list(20,0,true)(FakeRequest()).run).validate[List[CourseSummary]] match {
+        contentAsJson(ctrl.list(None,None,20,0,true)(FakeRequest()).run).validate[List[CourseSummary]] match {
           case JsSuccess(list,_) => list must beEmpty
           case JsError(errors) => fail("Course list should be empty.")
         }
@@ -165,7 +165,7 @@ object CoursesSpec extends PlaySpecification with ThrownMessages {
         val result = call(ctrl.approve(), request)
 
         status(result) must be equalTo OK
-        contentAsJson(ctrl.list(20,0,true)(FakeRequest()).run).validate[List[CourseSummary]] match {
+        contentAsJson(ctrl.list(None,None,20,0,true)(FakeRequest()).run).validate[List[CourseSummary]] match {
           case JsSuccess(list,_) => {
             list must have size 1
             list.head.name must be equalTo("Batman")
@@ -186,13 +186,13 @@ object CoursesSpec extends PlaySpecification with ThrownMessages {
           List(Rehoboth.copy(approved=Some(true)),
             PoquoyBrook.copy(approved=Some(true))).map(courseDAO.insert)
 
-        courseDAO.list() must have size 2
+        courseDAO.list(CourseDAO.DefaultListSize, 0) must have size 2
 
         val ctrl = new Courses
         val result = ctrl.delete(courses.head.id.getOrElse(-1))(tokenRequest)
 
         status(result.run) must be equalTo OK
-        courseDAO.list() must have size 1
+        courseDAO.list(CourseDAO.DefaultListSize, 0) must have size 1
       }
     }
 

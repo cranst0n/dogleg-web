@@ -1,18 +1,25 @@
 package services
 
-import models.{ Course, Image }
+import models.{ Course, Image, LatLon }
 
 trait CourseDAO {
 
-  def list(num: Int = CourseDAO.DefaultListSize, offset: Int = 0,
-    approved: Boolean = true): List[Course]
-
-  def unapproved(num: Int = CourseDAO.DefaultListSize, offset: Int = 0): List[Course] = {
-    list(num, offset, false)
+  def list(num: Int, offset: Int): List[Course] = {
+    list(None, num, offset, true)
   }
 
-  def search(text: String, num: Int = CourseDAO.DefaultListSize,
-    offset: Int = 0): List[Course]
+  def list(num: Int, offset: Int, approved: Boolean): List[Course] = {
+    list(None, num, offset, approved)
+  }
+
+  def list(location: Option[LatLon], num: Int, offset: Int,
+    approved: Boolean): List[Course]
+
+  def unapproved(num: Int, offset: Int): List[Course] = {
+    list(None, num, offset, false)
+  }
+
+  def search(text: String, num: Int, offset: Int): List[Course]
 
   def findById(id: Long): Option[Course]
 

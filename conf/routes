@@ -42,7 +42,7 @@ DELETE  /courserequests/:id     @controllers.RequestedCourses.deleteRequest(id: 
 ###########
 POST    /courses                @controllers.Courses.createCourse()
 GET     /courses/user           @controllers.Courses.recentForUser
-GET     /courses                @controllers.Courses.list(num: Int ?= 20, offset: Int ?= 0, approved: Boolean ?= true)
+GET     /courses                @controllers.Courses.list(lat: Option[Double], lon: Option[Double], num: Int ?= 20, offset: Int ?= 0, approved: Boolean ?= true)
 GET     /courses/search         @controllers.Courses.search(searchText: String, num: Int ?= 20, offset: Int ?= 0)
 GET     /courses/:id            @controllers.Courses.info(id: Long)
 GET     /courses/raw/:id        @controllers.Courses.raw(id: Long)

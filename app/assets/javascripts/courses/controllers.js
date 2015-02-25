@@ -25,7 +25,7 @@ define(['common'], function() {
     }
 
     $scope.loadCourses = function(num, offset) {
-      handleCourseRequest(courseService.list(num, offset));
+      handleCourseRequest(courseService.list(undefined, num, offset));
     };
 
     $scope.searchCourses = function(searchText, num, offset) {

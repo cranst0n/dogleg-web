@@ -16,7 +16,7 @@ import play.api.libs.json._
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.mvc._
 
-import models.{ Course, KMLMapping }
+import models.{ Course, KMLMapping, LatLon }
 
 import services._
 
@@ -38,8 +38,12 @@ class Courses(implicit val injector: Injector) extends DoglegController with Sec
   lazy val geoCodingService = inject[GeoCodingService]
   lazy val elevationService = inject[ElevationService]
 
-  def list(num: Int, offset: Int, approved: Boolean): Action[Unit] = Action(parse.empty) { implicit request =>
-    Ok(Json.toJson(courseDAO.list(num.min(CourseDAO.MaxListSize), offset, approved).map(_.summary)))
+  def list(lat: Option[Double], lon: Option[Double],
+    num: Int, offset: Int, approved: Boolean): Action[Unit] = Action(parse.empty) { implicit request =>
+
+    val latLon = lat.flatMap(latitude => lon.map(LatLon(latitude, _)))
+
+    Ok(Json.toJson(courseDAO.list(latLon, num.min(CourseDAO.MaxListSize), offset, approved).map(_.summary)))
   }
 
   def search(searchText: String, num: Int, offset: Int): Action[Unit] = Action(parse.empty) { implicit request =>
