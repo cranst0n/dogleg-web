@@ -63,7 +63,7 @@ class Authentication(implicit val injector: Injector) extends DoglegController w
    * X-XSRF-TOKEN in HTTP header.
    */
   def logout(): Action[Unit] = Action(parse.empty) { implicit request =>
-    Ok.discardingToken
+    ok("Logged out").discardingToken
   }
 
   def authUser(): Action[Unit] = HasToken(parse.empty) { implicit request =>

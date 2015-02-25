@@ -80,7 +80,7 @@ trait Security extends DoglegController with Injectable {
           }
         } getOrElse Future.successful(unauthorized("Unknown user"))
       }
-    } getOrElse Future.successful(unauthorized("No Token"))
+    } getOrElse Future.successful(unauthorized("No Token", "Expired or missing token."))
   }
 
   private[this] def maybeToken[A](request: Request[A]): Option[Token] = {
