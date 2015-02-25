@@ -10,17 +10,20 @@ scalaVersion := "2.11.5"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
+resolvers += Resolver.url("Edulify Repository", url("http://edulify.github.io/modules/releases/"))(Resolver.ivyStylePatterns)
+
 // Dependencies
 libraryDependencies ++= Seq(
   cache, filters, jdbc, ws,
 
   // server-side
-  "org.scaldi"                %% "scaldi"              % "0.5.3",
+  "org.scaldi"                %% "scaldi"              % "0.5.4",
   "org.scaldi"                %% "scaldi-play"         % "0.5.3",
   "com.github.tototoshi"      %% "play-flyway"         % "1.2.1",
   "com.typesafe.play"         %% "play-slick"          % "0.8.1",
   "org.postgresql"            %  "postgresql"          % "9.4-1200-jdbc41",
-  "com.github.tminglei"       %% "slick-pg"            % "0.8.1",
+  "com.github.tminglei"       %% "slick-pg"            % "0.8.2",
+  "com.edulify"               %% "play-hikaricp"       % "2.0.1",
   "com.vividsolutions"        %  "jts"                 % "1.13",
   "com.lambdaworks"           %  "scrypt"              % "1.4.0",
   "com.github.nscala-time"    %% "nscala-time"         % "1.8.0",

@@ -73,6 +73,7 @@ create table if not exists course (
 );
 
 create index on course(creatorid);
+create index ON course using gist (location);
 create index on course using gin (name gin_trgm_ops, city gin_trgm_ops,
   state gin_trgm_ops, country gin_trgm_ops);
 

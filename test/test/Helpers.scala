@@ -157,9 +157,14 @@ object Helpers extends Mockito {
 
   private[this] val testDBConfig =
     Map(
-      "db.default.driver"   -> "org.postgresql.Driver",
-      "db.default.user"     -> "dogleg",
-      "db.default.password" -> "dogleg",
-      "db.default.url"      -> "jdbc:postgresql://localhost/doglegtest"
+      // Play-Flyway compliance
+      "db.default.driver"           -> "org.postgresql.Driver",
+      "db.default.url"              -> "jdbc:postgresql://localhost/doglegtest",
+      "db.default.user"             -> "dogleg",
+      "db.default.password"         -> "dogleg",
+      // HikariCP compliance
+      "db.default.driverClassName"  -> "org.postgresql.Driver",
+      "db.default.jdbcUrl"          -> "jdbc:postgresql://localhost/doglegtest",
+      "db.default.username"         -> "dogleg"
     )
 }
