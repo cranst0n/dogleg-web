@@ -14,7 +14,7 @@ object HoleSpec extends Specification with ThrownMessages {
   "Hole" should {
 
     "estimate yardage" in {
-      Rehoboth.holes(0).estimateYardage must be equalTo(397)
+      Rehoboth.holes(0).estimateYardage must be equalTo(399)
     }
   }
 

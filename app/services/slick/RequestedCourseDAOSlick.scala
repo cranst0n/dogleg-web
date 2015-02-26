@@ -42,7 +42,7 @@ class RequestedCourseDAOSlick(implicit val injector: Injector)
   override def insert(request: RequestedCourse): RequestedCourse = {
     DB withSession { implicit session =>
       requestedCourses returning requestedCourses.map(_.id) into ((dbRequest, assignedId) =>
-        dbRequest.copy(id = assignedId).toRequestedCourse
+        dbRequest.copy(id = Some(assignedId)).toRequestedCourse
       ) += DBRequestedCourse(request.id, request.name, request.city,
         request.state, request.country, request.website, request.comment,
         request.created, request.requestor.flatMap(_.id), None)

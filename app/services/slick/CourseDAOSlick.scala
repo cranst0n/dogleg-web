@@ -11,7 +11,7 @@ import DoglegPostgresDriver.simple._
 import Implicits._
 import Tables._
 
-import models.{ Course, Image, LatLon }
+import models.{ Course, Exclusivity, Image, LatLon }
 
 import services._
 
@@ -66,9 +66,9 @@ class CourseDAOSlick(implicit val injector: Injector)
     DB withSession { implicit session =>
 
       val courseId = courses returning courses.map(_.id) +=
-        DBCourse(-1, course.name, course.city, course.state, course.country,
-          course.numHoles, course.location,
-          course.creatorId, course.approved.getOrElse(false))
+        DBCourse(None, course.name, course.city, course.state, course.country,
+          course.numHoles, course.exclusivity.toString, course.phoneNumber,
+          course.location, course.creatorId, course.approved.getOrElse(false))
 
       val ratings = courseRatingDAO.insert(course.copy(id = Option(courseId)))
       val holes = holeDAO.insert(course.copy(id = Option(courseId)))
@@ -95,11 +95,11 @@ class CourseDAOSlick(implicit val injector: Injector)
       course.id.map { courseId =>
 
         courses.filter(_.id === courseId).
-          map(c => (c.name, c.city, c.state, c.country, c.numHoles, c.location,
-            c.creatorId, c.approved)).
+          map(c => (c.name, c.city, c.state, c.country, c.numHoles,
+            c.exclusivity, c.phoneNumber, c.location, c.creatorId, c.approved)).
           update((course.name, course.city, course.state, course.country,
-            course.numHoles, course.location,
-            course.creatorId, course.approved.getOrElse(false)
+            course.numHoles, course.exclusivity.toString, course.phoneNumber,
+            course.location, course.creatorId, course.approved.getOrElse(false)
           ))
 
         val updatedRating = courseRatingDAO.update(course)

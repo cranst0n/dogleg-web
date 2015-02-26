@@ -1,8 +1,5 @@
 ## Web backend component for serving & managing dogleg golf data.
 
-[![Build Status](https://travis-ci.org/cranst0n/dogleg-web.svg)](https://travis-ci.org/cranst0n/dogleg-web)
-[![Codacy Status](https://www.codacy.com/project/badge/353a0186912b4821b8ac5c533bc3210f)](https://www.codacy.com/public/cranstonian/dogleg-web)
-
 ### Intro
 
 This project serves as the backend for storing golf data (among a number of

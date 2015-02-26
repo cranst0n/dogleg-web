@@ -30,7 +30,7 @@ trait Security extends DoglegController with Injectable {
   val AuthTokenUrlKey = "auth"
 
   lazy val CacheExpiration = app.configuration.getInt("token.expiration").
-    getOrElse(1.day.toSeconds.toInt) // 1 day default
+    getOrElse(3.day.toSeconds.toInt) // 3 day default
 
   case class TokenRequest[A](token: Token, user: User,
     private val request: Request[A]) extends WrappedRequest(request)
@@ -38,7 +38,9 @@ trait Security extends DoglegController with Injectable {
   implicit class ResultWithToken(result: Result) {
 
     def renewToken(implicit request: TokenRequest[_]): Result = {
-      Cache.set(request.token, request.user.id.get, CacheExpiration)
+      request.user.id.map { userId =>
+        Cache.set(request.token, userId, CacheExpiration)
+      }
       result.withCookies(
         Cookie(AuthTokenCookieKey, request.token, None, httpOnly = false))
     }

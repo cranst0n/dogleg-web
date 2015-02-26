@@ -52,9 +52,9 @@ class UserDAOSlick(implicit val injector: Injector)
 
         userProfiles += DBUserProfile(user.profile.home, user.profile.location,
           profileWithAvatar.avatar.flatMap(_.id),
-          user.profile.favoriteCourse.flatMap(_.id), id)
+          user.profile.favoriteCourse.flatMap(_.id), Some(id))
 
-        dbUser.copy(id = id).toUser
+        dbUser.copy(id = Some(id)).toUser
     }) += DBUser(user.id, user.name, hashPassword(user.password), user.email,
         user.admin, user.active, user.created)
     }

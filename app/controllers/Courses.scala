@@ -38,12 +38,15 @@ class Courses(implicit val injector: Injector) extends DoglegController with Sec
   lazy val geoCodingService = inject[GeoCodingService]
   lazy val elevationService = inject[ElevationService]
 
-  def list(lat: Option[Double], lon: Option[Double],
-    num: Int, offset: Int, approved: Boolean): Action[Unit] = Action(parse.empty) { implicit request =>
+  def list(num: Int, offset: Int, approved: Option[Boolean],
+    lat: Option[Double], lon: Option[Double]): Action[Unit] = Action(parse.empty) { implicit request =>
 
     val latLon = lat.flatMap(latitude => lon.map(LatLon(latitude, _)))
 
-    Ok(Json.toJson(courseDAO.list(latLon, num.min(CourseDAO.MaxListSize), offset, approved).map(_.summary)))
+    Ok(Json.toJson(
+      courseDAO.list(latLon, num.min(CourseDAO.MaxListSize), offset,
+        approved.getOrElse(true)).map(_.summary)
+    ))
   }
 
   def search(searchText: String, num: Int, offset: Int): Action[Unit] = Action(parse.empty) { implicit request =>
@@ -61,7 +64,8 @@ class Courses(implicit val injector: Injector) extends DoglegController with Sec
 
   def recentForUser: Action[Unit] = HasToken(parse.empty) { implicit request =>
     Ok(Json.toJson(
-      roundDAO.list(request.user).map(_.course.summary).toSet.take(5)
+      roundDAO.list(request.user, RoundDAO.DefaultListSize, 0).
+        map(_.course.summary).toSet.take(5)
     ))
   }
 
@@ -175,8 +179,8 @@ class Courses(implicit val injector: Injector) extends DoglegController with Sec
   private[this] def parseCourseFile(courseFile: FileUpload): Future[Try[Course]] = {
     (fileExtension(courseFile.filename) match {
       case Some("kml") => {
-        KMLMapping.fromKML(courseFile.content, geoCodingService,
-          elevationService).toCourse
+        KMLMapping(courseFile.content).
+          toCourse(geoCodingService, elevationService)
       }
       case Some("json") => {
         Json.parse(courseFile.content).validate[Course] match {

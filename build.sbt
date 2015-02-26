@@ -1,4 +1,7 @@
 import WebKeys._
+import com.typesafe.sbt.SbtNativePackager._
+import com.typesafe.sbt.packager.archetypes.ServerLoader.{SystemV, Upstart}
+import NativePackagerKeys._
 
 name := "dogleg-web"
 
@@ -6,11 +9,24 @@ organization in ThisBuild := "org.dogleg"
 
 version := "0.1-SNAPSHOT"
 
-scalaVersion := "2.11.5"
+maintainer in Linux := "Ian McIntosh <cranston.ian@gmail.com>"
+
+packageSummary in Linux := "Backend web server for Dogleg."
+
+packageDescription := "Dogleg is a golf data management system to record course and round data with GPS tracking and more."
+
+serverLoading in Debian := SystemV
+
+scalaVersion := "2.11.6"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-resolvers += Resolver.url("Edulify Repository", url("http://edulify.github.io/modules/releases/"))(Resolver.ivyStylePatterns)
+addCommandAlias("deb", "debian:packageBin")
+
+resolvers ++= Seq(
+  Resolver.url("Edulify Repository", url("http://edulify.github.io/modules/releases/"))(Resolver.ivyStylePatterns),
+  "google-sedis-fix" at "http://pk11-scratch.googlecode.com/svn/trunk"
+)
 
 // Dependencies
 libraryDependencies ++= Seq(
@@ -21,21 +37,22 @@ libraryDependencies ++= Seq(
   "org.scaldi"                %% "scaldi-play"         % "0.5.3",
   "com.github.tototoshi"      %% "play-flyway"         % "1.2.1",
   "com.typesafe.play"         %% "play-slick"          % "0.8.1",
-  "org.postgresql"            %  "postgresql"          % "9.4-1200-jdbc41",
-  "com.github.tminglei"       %% "slick-pg"            % "0.8.2",
+  "org.postgresql"            %  "postgresql"          % "9.4-1201-jdbc41",
+  "com.github.tminglei"       %% "slick-pg"            % "0.8.4",
   "com.edulify"               %% "play-hikaricp"       % "2.0.1",
   "com.vividsolutions"        %  "jts"                 % "1.13",
   "com.lambdaworks"           %  "scrypt"              % "1.4.0",
   "com.github.nscala-time"    %% "nscala-time"         % "1.8.0",
   "com.sksamuel.scrimage"     %% "scrimage-core"       % "1.4.2",
   "com.sksamuel.scrimage"     %% "scrimage-canvas"     % "1.4.2",
+  "com.typesafe.play.plugins" %% "play-plugins-redis"  % "2.3.1",
   "com.typesafe.play.plugins" %% "play-plugins-mailer" % "2.3.1",
 
   // WebJars (i.e. client-side) dependencies
   "org.webjars" % "requirejs" % "2.1.16",
-  "org.webjars" % "angularjs" % "1.3.13" exclude("org.webjars", "jquery"),
+  "org.webjars" % "angularjs" % "1.3.14" exclude("org.webjars", "jquery"),
   "org.webjars" % "cryptojs"  % "3.1.2",
-  "org.webjars" % "lodash"    % "3.1.0",
+  "org.webjars" % "lodash"    % "3.3.1",
   "org.webjars" % "momentjs"  % "2.9.0"
 )
 

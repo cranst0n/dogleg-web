@@ -7,6 +7,8 @@ import com.github.tminglei.slickpg._
 trait DoglegPostgresDriver extends PostgresDriver with PgDateSupportJoda
   with PgPlayJsonSupport with PgSearchSupport with PgPostGISSupport {
 
+  override val pgjson = "jsonb"
+
   override lazy val Implicit = new ImplicitsPlus {}
   override val simple = new SimpleQLPlus {}
 
@@ -14,6 +16,7 @@ trait DoglegPostgresDriver extends PostgresDriver with PgDateSupportJoda
     with JsonImplicits with SearchImplicits with PostGISImplicits
 
   trait SimpleQLPlus extends SimpleQL with ImplicitsPlus
+
 }
 
 object DoglegPostgresDriver extends DoglegPostgresDriver

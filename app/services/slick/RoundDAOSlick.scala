@@ -1,5 +1,7 @@
 package services.slick
 
+import org.joda.time.DateTime
+
 import scaldi.{ Injectable, Injector }
 
 import play.api.Play.current
@@ -30,11 +32,10 @@ class RoundDAOSlick(implicit val injector: Injector)
 
       val insertedRound: Round =
         rounds returning rounds.map(_.id) into ((r, id) =>
-          round.copy(id = id)
+          round.copy(id = Some(id))
         ) += dbRound
 
-      holeScoreDAO.insert(insertedRound)
-      insertedRound
+      insertedRound.copy(holeScores = holeScoreDAO.insert(insertedRound))
     }
   }
 
@@ -47,18 +48,22 @@ class RoundDAOSlick(implicit val injector: Injector)
       } yield {
 
         rounds.filter(_.id === round.id).
-          map(r => (r.courseId, r.time, r.official, r.ratingId, r.handicap, r.handicapOverride)).
-          update((courseId, round.time, round.official, ratingId, round.handicap, round.handicapOverride))
+          map(r => (r.courseId, r.time, r.official, r.ratingId,
+            r.handicap, r.handicapOverride)).
+          update((courseId, round.time, round.official, ratingId,
+            round.handicap, round.handicapOverride))
 
-        holeScoreDAO.update(round)
-        round
+        round.copy(holeScores = holeScoreDAO.update(round))
       }
     }
   }
 
-  override def delete(id: Long): Int = {
+  override def delete(id: Long): Option[Round] = {
     DB withSession { implicit session =>
-      rounds.filter(_.id === id).delete
+      findById(id).map { round =>
+        rounds.filter(_.id === id).delete
+        round
+      }
     }
   }
 
@@ -69,11 +74,30 @@ class RoundDAOSlick(implicit val injector: Injector)
       user.id.map { userId =>
         rounds.
           filter(_.userId === userId).
+          sortBy(_.time.desc).
           drop(offset).
           take(num).
-          sortBy(_.time.desc).
           list.
           map(_.toRound)
+      } getOrElse Nil
+    }
+  }
+
+  override def before(user: User, time: DateTime): List[Round] = {
+    byTime(user, time, _ < time)
+  }
+
+  override def after(user: User, time: DateTime): List[Round] = {
+    byTime(user, time, _ > time)
+  }
+
+  private[this] def byTime(user: User, time: DateTime, f: Column[DateTime] => Column[Boolean]) = {
+    DB withSession { implicit session =>
+      user.id.map { userId =>
+        rounds.filter(r => r.userId === userId && f(r.time)).
+        sortBy(_.time.desc).
+        list.
+        map(_.toRound)
       } getOrElse Nil
     }
   }

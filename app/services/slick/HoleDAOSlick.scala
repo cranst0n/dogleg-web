@@ -34,7 +34,7 @@ class HoleDAOSlick(implicit val injector: Injector)
       course.holes.flatMap { hole =>
         course.id.map { courseId =>
           val holeId = holes returning holes.map(_.id) +=
-            DBHole(hole.id.getOrElse(-1), hole.number, courseId)
+            DBHole(hole.id, hole.number, courseId)
 
           hole.copy(
             id = Some(holeId),

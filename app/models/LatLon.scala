@@ -56,9 +56,12 @@ object LatLon {
     LatLon(coordinate.x, coordinate.y, coordinate.z)
   }
 
+  implicit def toVividCoordinate(latLon: LatLon): Coordinate = {
+    new Coordinate(latLon.latitude, latLon.longitude, latLon.altitude)
+  }
+
   implicit def toVividPoint(latLon: LatLon): Point = {
-    geometryFactory.createPoint(
-      new Coordinate(latLon.latitude, latLon.longitude, latLon.altitude))
+    geometryFactory.createPoint(toVividCoordinate(latLon))
   }
 
   implicit def toVividPointOpt(latLon: Option[LatLon]): Option[Point] = {

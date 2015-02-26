@@ -19,7 +19,7 @@ class HoleRatingDAOSlick(implicit val injector: Injector)
     rating.id.map { ratingId =>
       DB withSession { implicit session =>
         holeRatings ++= rating.holeRatings.map { hr =>
-          DBHoleRating(hr.number, hr.par, hr.yardage, hr.handicap, ratingId)
+          DBHoleRating(hr.id, hr.number, hr.par, hr.yardage, hr.handicap, ratingId)
         }
         rating.holeRatings
       }
@@ -34,8 +34,14 @@ class HoleRatingDAOSlick(implicit val injector: Injector)
 
   override def update(rating: CourseRating): List[HoleRating] = {
     DB withSession { implicit session =>
-      holeRatings.filter(_.ratingId === rating.id.getOrElse(-1L)).delete
-      insert(rating)
+      rating.holeRatings.map { holeRating =>
+        holeRatings.filter(_.id === holeRating.id).
+          map(hr => (hr.number, hr.par, hr.yardage, hr.handicap)).
+          update((holeRating.number, holeRating.par,
+            holeRating.yardage, holeRating.handicap))
+
+          holeRating
+      }
     }
   }
 }

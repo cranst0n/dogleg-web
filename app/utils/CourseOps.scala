@@ -1,6 +1,8 @@
 package utils
 
 import scala.collection.JavaConversions._
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.io.Source
 import scala.util.{ Failure, Success, Try }
 
@@ -10,13 +12,15 @@ import java.nio.file.Paths
 import org.apache.commons.io.FileUtils._
 import org.apache.commons.io.filefilter.IOFileFilter
 
+import scaldi.{ Injectable, Injector }
+
 import play.api.libs.json._
 import play.core.StaticApplication
 
-import models.{ Course, Gender }
+import models.{ Course, Gender, KMLMapping, Hole }
 import Gender._
 
-import services.{ ElevationService, ProductionModule }
+import services._
 import services.google.GoogleElevationService
 
 import utils.FileUtils._
@@ -43,13 +47,20 @@ object CourseOps {
     }
   }
 
-  private val dirFilter = new IOFileFilter {
+  private[this] val dirFilter = new IOFileFilter {
     def accept(file: File): Boolean = true
     def accept(file: File, name: String): Boolean = true
   }
 }
 
-object AddElevation extends App {
+abstract class CourseOpsApp[T] extends App with Injectable {
+
+  def op(file: File, course: Course): T
+
+  def filter(file: File): Boolean = {
+    file.getName.toLowerCase.contains(courseNameFilter.toLowerCase) &&
+      isFileExtension(file.getName, "json")
+  }
 
   implicit val playApp = new StaticApplication(Paths.get(".").toFile)
 
@@ -61,17 +72,47 @@ object AddElevation extends App {
 
   val courseNameFilter = args.headOption.getOrElse("<name_of_course>")
 
-  CourseOps.courseOp(rootDir) { file =>
+  CourseOps.courseOp(rootDir) { filter(_) }{ (courseFile, course) =>
+    op(courseFile, course)
+  }
+}
 
-    file.getName.toLowerCase.contains(courseNameFilter) &&
-      isFileExtension(file.getName, "json")
-    }{ (courseFile, course) =>
+object AddElevation extends CourseOpsApp[Unit] {
 
-      println(s"Adding elevation to ${courseFile.getAbsolutePath}")
+  override def op(file: File, course: Course): Unit = {
 
-      val courseWithElevation = AddCourseElevation.toCourse(course)
-      val jsonString = Json.prettyPrint(Json.toJson(courseWithElevation))
+    println(s"Adding elevation to ${file.getAbsolutePath}")
 
-      writeToFile(courseFile, jsonString)
+    val courseWithElevation = AddCourseElevation.toCourse(course)
+    val jsonString = Json.prettyPrint(Json.toJson(courseWithElevation))
+
+    writeToFile(file, jsonString)
+  }
+}
+
+object UpdateFromKml extends CourseOpsApp[Unit] {
+
+  override def op(file: File, course: Course): Unit = {
+
+    val kmlFile =
+      new File(file.getAbsolutePath.reverse.dropWhile(_ != '.').reverse + "kml")
+
+    println(s"Extracting KML data from ${kmlFile.getAbsolutePath}")
+
+    val kmlCourseHoles: Future[List[Hole]] =
+      KMLMapping(Source.fromFile(kmlFile).getLines.mkString).
+        toCourse(new MockGeoCodingService(), new MockElevationService()).
+        map(_.holes)
+
+    kmlCourseHoles.map { newHoles =>
+      val courseWithPaths =
+        AddCourseElevation.toCourse(course.copy(holes = newHoles))
+
+      val jsonString = Json.prettyPrint(Json.toJson(courseWithPaths))
+
+      writeToFile(file, jsonString)
+
+      println(s"Update finished.")
     }
+  }
 }

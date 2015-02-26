@@ -29,7 +29,7 @@ object CourseSpec extends Specification with ThrownMessages {
     }
 
     "estimate yardage" in {
-      Rehoboth.estimateYardage must be equalTo 6585
+      Rehoboth.estimateYardage must be equalTo 6607
     }
 
     "retrieve holes" in {

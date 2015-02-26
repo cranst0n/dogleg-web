@@ -1,5 +1,7 @@
 package services.slick
 
+import scala.slick.jdbc.JdbcBackend.SessionDef
+
 import scaldi.{ Injectable, Injector }
 
 import play.api.Play.current
@@ -22,19 +24,7 @@ class CourseRatingDAOSlick(implicit val injector: Injector)
     DB withSession { implicit session =>
       course.id.map { courseId =>
         course.ratings.map { rating =>
-
-          val ratingId =
-            courseRatings returning courseRatings.map(_.id) +=
-              DBCourseRating(-1, rating.teeName, rating.rating, rating.slope,
-                rating.frontRating, rating.frontSlope, rating.backRating,
-                rating.backSlope, rating.bogeyRating,
-                rating.gender.toString, courseId)
-
-          val insertedHoleRatings =
-            holeRatingDAO.insert(rating.copy(id = Option(ratingId)))
-
-          rating.copy(id = Option(ratingId), holeRatings = insertedHoleRatings)
-
+          insert(courseId, rating)
         }
       } getOrElse Nil
     }
@@ -56,26 +46,52 @@ class CourseRatingDAOSlick(implicit val injector: Injector)
   override def update(course: Course): List[CourseRating] = {
     DB withSession { implicit session =>
       course.id map { courseId =>
+
+        val updatedRatingIds = course.ratings.flatMap(_.id)
+
         course.ratings.map { rating =>
 
-          // First remove any ratings not in the updated course
-          val ratingIds = course.ratings.flatMap(_.id)
-          courseRatings.filter(_.courseId === courseId).
-            filter(rating => !(rating.id inSet ratingIds)).delete
+          rating.id.map { idToUpdate =>
 
-          val updateHoleRatings = holeRatingDAO.update(rating)
+            // First remove any ratings not in the updated course
+            courseRatings.filter(_.courseId === courseId).
+              filter(rating => !(rating.id inSet updatedRatingIds)).delete
 
-          courseRatings.filter(_.id === rating.id).
-            map(r => (r.teeName, r.rating, r.slope, r.frontRating, r.frontSlope,
-              r.backRating, r.backSlope, r.bogeyRating, r.gender, r.courseId)).
-            update((rating.teeName, rating.rating, rating.slope,
-              rating.frontRating, rating.frontSlope, rating.backRating,
-              rating.backSlope, rating.bogeyRating, rating.gender.toString,
-              courseId))
+            update(idToUpdate, courseId, rating)
 
-          rating.copy(holeRatings = updateHoleRatings)
+          } getOrElse insert(courseId, rating)
         }
       } getOrElse(Nil)
     }
+  }
+
+  private[this] def insert(courseId: Long, rating: CourseRating)(implicit sessionDef: SessionDef) = {
+
+    val ratingId =
+      courseRatings returning courseRatings.map(_.id) +=
+        DBCourseRating(None, rating.teeName, rating.rating, rating.slope,
+          rating.frontRating, rating.frontSlope, rating.backRating,
+          rating.backSlope, rating.bogeyRating,
+          rating.gender.toString, courseId)
+
+    val insertedHoleRatings =
+      holeRatingDAO.insert(rating.copy(id = Option(ratingId)))
+
+    rating.copy(id = Option(ratingId), holeRatings = insertedHoleRatings)
+  }
+
+  private[this] def update(id: Long, courseId: Long, rating: CourseRating)(implicit sessionDef: SessionDef) = {
+
+    val updateHoleRatings = holeRatingDAO.update(rating)
+
+    courseRatings.filter(_.id === id).
+      map(r => (r.teeName, r.rating, r.slope, r.frontRating, r.frontSlope,
+        r.backRating, r.backSlope, r.bogeyRating, r.gender, r.courseId)).
+      update((rating.teeName, rating.rating, rating.slope,
+        rating.frontRating, rating.frontSlope, rating.backRating,
+        rating.backSlope, rating.bogeyRating, rating.gender.toString,
+        courseId))
+
+    rating.copy(holeRatings = updateHoleRatings)
   }
 }

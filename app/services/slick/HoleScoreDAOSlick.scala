@@ -19,17 +19,28 @@ class HoleScoreDAOSlick(implicit val injector: Injector)
 
   override def insert(round: Round): List[HoleScore] = {
     DB withSession { implicit session =>
-      holeScores ++= round.holeScores.map { s =>
-        toDBScore(s).copy(roundId = round.id)
-      }
-      round.holeScores
+
+      val insertedDBHoleScores =
+        holeScores returning holeScores.map(_.id) into((holeScore, assignedId) =>
+          holeScore.copy(id = Some(assignedId))
+        ) ++= round.holeScores.map(_.copy(roundId = round.id)).map(toDBScore)
+
+      insertedDBHoleScores.map(_.toHoleScore).toList
     }
   }
 
   override def update(round: Round): List[HoleScore] = {
     DB withSession { implicit session =>
-      holeScores.filter(_.roundId === round.id).delete
-      insert(round)
+      round.holeScores.map { holeScore =>
+        holeScores.filter(_.id === holeScore.id).
+          map(hs => (hs.score, hs.netScore, hs.putts, hs.penaltyStrokes,
+            hs.fairwayHit, hs.gir, hs.roundId, hs.holeId)).
+          update((holeScore.score, holeScore.netScore, holeScore.putts,
+            holeScore.penaltyStrokes, holeScore.fairwayHit, holeScore.gir,
+            round.id, holeScore.hole.id.getOrElse(-1)))
+
+        holeScore
+      }
     }
   }
 
@@ -40,7 +51,7 @@ class HoleScoreDAOSlick(implicit val injector: Injector)
   }
 
   private[this] def toDBScore(hs: HoleScore): DBHoleScore = {
-    DBHoleScore(hs.score, hs.netScore, hs.putts, hs.penaltyStrokes,
+    DBHoleScore(hs.id, hs.score, hs.netScore, hs.putts, hs.penaltyStrokes,
       hs.fairwayHit, hs.gir, hs.roundId, hs.hole.id.getOrElse(-1))
   }
 }

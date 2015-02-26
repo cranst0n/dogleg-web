@@ -18,6 +18,9 @@ class ProductionModule extends Module {
   // so it's disabled by default.
   bind[ElevationService] to new MockElevationService
 
+  bind[HandicapService] to new DefaultHandicapService
+
+  bind[CrashReportDAO] to new CrashReportDAOSlick
   bind[ImageDAO] to new ImageDAOSlick
 
   bind[UserDAO] to new UserDAOSlick
@@ -42,6 +45,7 @@ class WebModule extends Module {
   binding to new Application
   binding to new Authentication
   binding to new Courses
+  binding to new CrashReports
   binding to new Images
   binding to new RequestedCourses
   binding to new Rounds

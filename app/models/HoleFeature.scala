@@ -3,7 +3,8 @@ package models
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-case class HoleFeature(name: String, coordinates: List[LatLon], holeId: Option[Long] = None) {
+case class HoleFeature(id: Option[Long], name: String,
+  coordinates: List[LatLon], holeId: Option[Long] = None) {
 
   lazy val estimateCenter: LatLon = {
     coordinates match {

@@ -125,7 +125,7 @@ object LintsSpec extends Specification with ThrownMessages {
       val hole = Rehoboth.holes(0)
 
       HoleFeaturesLintCheck(hole) must beEmpty
-      HoleFeaturesLintCheck(hole.copy(features = Nil)) must have size(3)
+      HoleFeaturesLintCheck(hole.copy(features = Nil)) must have size(4)
     }
   }
 

@@ -16,7 +16,7 @@ sealed trait LintCheck[T] extends Function[T, List[Lint]]
 object CourseKmlLintCheck extends LintCheck[Course] {
   def apply(course: Course): List[Lint] = {
     (CourseNameLintCheck :: CourseNumHolesLintCheck ::
-      CourseLocationLintCheck :: CourseHolesLintCheck :: Nil).
+       CourseLocationLintCheck :: CourseHolesLintCheck :: Nil).
     map(_.apply(course)).flatten.filter( lint =>
       !lint.message.contains("elevation")
     )
@@ -26,7 +26,7 @@ object CourseKmlLintCheck extends LintCheck[Course] {
 object CourseJsonLintCheck extends LintCheck[Course] {
   def apply(course: Course): List[Lint] = {
     (CourseKmlLintCheck :: CourseAddressLintCheck ::
-      CourseRatingsLintCheck :: Nil).
+      CoursePhoneNumberLintCheck :: CourseRatingsLintCheck :: Nil).
     map(_.apply(course)).flatten
   }
 }
@@ -73,6 +73,19 @@ object CourseNumHolesLintCheck extends LintCheck[Course] {
   }
 }
 
+object CoursePhoneNumberLintCheck extends LintCheck[Course] {
+  def apply(course: Course): List[Lint] = {
+    course.phoneNumber match {
+      case "" => {
+        List(
+          Lint(s"${course.name} is missing a phone number.",
+          "All courses should have a phone number provided."))
+      }
+      case _ => Nil
+    }
+  }
+}
+
 object CourseLocationLintCheck extends LintCheck[Course] {
   def apply(course: Course): List[Lint] = {
     course.location match {
@@ -109,7 +122,24 @@ object CourseRatingsLintCheck extends LintCheck[Course] {
             }
           }.flatten
 
-        genderLints ::: course.ratings.map(CourseRatingLintCheck).flatten
+        val nineHoleLints =
+          course.numHoles match {
+            case 9 => {
+              course.ratings.map { rating =>
+                if(rating.frontRating != rating.backRating ||
+                  rating.frontSlope != rating.backSlope) {
+
+                  Some(Lint(s"${course.name}'s ${rating.teeName} should have the same front and back rating/slope",
+                    "9 hole courses should have an equal front/back rating"))
+                } else {
+                  None
+                }
+              }.flatten
+            }
+            case _ => Nil
+          }
+
+        genderLints ::: nineHoleLints ::: course.ratings.map(CourseRatingLintCheck).flatten
       }
     }
   }
@@ -125,7 +155,8 @@ object CourseRatingLintCheck extends LintCheck[CourseRating] {
 object RatingLintCheck extends LintCheck[CourseRating] {
   def apply(rating: CourseRating): List[Lint] = {
     List(
-      if(rating.rating >= 60 && rating.rating <= 80) {
+      // Account for par 3 courses
+      if((rating.par / rating.numHoles == 3) || (rating.rating >= 60 && rating.rating <= 80)) {
         None
       } else {
         Some(Lint(s"Suspicious rating value for ${rating.teeName}: ${rating.rating}.",
@@ -163,7 +194,7 @@ object SlopeLintCheck extends LintCheck[CourseRating] {
 object BogeyRatingLintCheck extends LintCheck[CourseRating] {
   def apply(rating: CourseRating): List[Lint] = {
     rating.bogeyRating match {
-      case br if br >= 75 && br <= 110 => Nil
+      case br if (rating.par / rating.numHoles == 3) || (br >= 75 && br <= 110) => Nil
       case _ => {
         List(Lint(s"Suspicious bogey rating value ${rating.teeName}: ${rating.bogeyRating}.",
           "Bogey ratings are generally somewhere between 75 and 110."))
@@ -318,7 +349,8 @@ object HoleFeaturesLintCheck extends LintCheck[Hole] {
        None
       },
       featureExists("green"),
-      featureExists("tee")
+      featureExists("tee"),
+      featureExists("flyby")
     ).flatten ::: hole.features.map(f => FeatureLintCheck((hole,f))).flatten
   }
 }
@@ -340,8 +372,8 @@ object FeatureLintCheck extends LintCheck[(Hole, HoleFeature)] {
   }
 
   private[this] val knownFeatureNames = Set(
-    "bunker", "cart", "creek", "crest", "dogleg", "fairway", "green", "lake",
-    "landing", "marker", "pond", "tee", "tree", "waste", "water"
+    "bunker", "cart", "creek", "crest", "dogleg", "fairway", "flyby", "green",
+    "lake", "landing", "marker", "pond", "tee", "tree", "waste", "water"
   )
 }
 

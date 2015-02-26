@@ -122,7 +122,7 @@ object Helpers extends Mockito {
       course.holes.zip(rating.holeRatings).map { case (hole,holeRating) =>
 
         val score = holeRating.par + Random.nextInt(5) - 1
-        val netScore = score + (Random.nextInt(2) - 2)
+        val netScore = 0
         val putts = (Random.nextInt(3) + 1).min(score - 1)
 
         val penaltyStrokes =
@@ -140,7 +140,7 @@ object Helpers extends Mockito {
 
         val gir = score - putts <= holeRating.par - 2
 
-        HoleScore(None, score, netScore, putts,
+        HoleScore(None, None, score, netScore, putts,
           penaltyStrokes, fairwayHit, gir, hole)
       }
 

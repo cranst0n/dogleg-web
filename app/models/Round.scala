@@ -45,4 +45,10 @@ case class Round(id: Option[Long], user: User, course: Course,
 
 object Round {
   implicit val jsonFormat = Json.format[Round]
+
+  implicit object RoundOrdering extends scala.math.Ordering[Round] {
+    def compare(a: Round, b: Round): Int = {
+      (b.time.getMillis - a.time.getMillis).toInt
+    }
+  }
 }

@@ -12,9 +12,19 @@ drop table if exists course;
 drop table if exists dogleguserprofile;
 drop table if exists dogleguser;
 drop table if exists images;
+drop table if exists crashreport;
 
 create extension if not exists postgis;
 create extension if not exists pg_trgm;
+
+-------------------
+-- crash reports --
+-------------------
+create table if not exists crashreport (
+  id                         bigserial,
+  time                       timestamptz not null,
+  report                     jsonb
+);
 
 ------------
 -- images --
@@ -65,6 +75,8 @@ create table if not exists course (
   state                      text not null,
   country                    text not null,
   numholes                   smallint not null,
+  exclusivity                text not null,
+  phonenumber                text not null,
   location                   geometry not null,
   creatorid                  bigint references dogleguser(id)
     on delete set null on update cascade,
@@ -115,6 +127,7 @@ create index on courserating(courseid);
 -- holerating --
 ----------------
 create table if not exists holerating (
+  id                         bigserial,
   number                     smallint not null,
   par                        smallint not null,
   yardage                    smallint not null,
@@ -143,6 +156,7 @@ create index on hole (courseid);
 -- hole feature --
 ------------------
 create table if not exists holefeature (
+  id                         bigserial,
   name                       text not null,
   coordinates                geometry not null,
   holeid                     bigint not null references hole(id)
@@ -208,6 +222,7 @@ create index on roundimage (imageid);
 -- hole score --
 ----------------
 create table if not exists holescore (
+  id                         bigserial,
   score                      smallint not null,
   netscore                   smallint not null,
   putts                      smallint not null,

@@ -25,9 +25,18 @@
           <input ng-model="course.country" ng-disabled="readOnly" type="text">
         </md-input-container>
         <md-input-container>
-          <label>Hole</label>
+          <label>Holes</label>
           <input ng-model="course.numHoles" ng-disabled="readOnly" type="number" min="9" max="18">
         </md-input-container>
+        <md-input-container>
+          <label>Phone</label>
+          <input ng-model="course.phoneNumber" ng-disabled="readOnly" type="text">
+        </md-input-container>
+        <md-radio-group ng-model="course.exclusivity">
+          <md-radio-button ng-repeat="exclusivity in exclusivitySet" ng-value="exclusivity.value" ng-disabled="readOnly">
+            {{ exclusivity.title }}
+          </md-radio-button>
+        </md-radio-group>
       </md-card-content>
     </md-card>
 

@@ -20,8 +20,9 @@ object Implicits {
   }
 
   implicit val dbCourseGetResult: GetResult[DBCourse] = GetResult(r =>
-    DBCourse(r.nextLong, r.nextString, r.nextString, r.nextString, r.nextString,
-      r.nextInt, r.nextGeometry.asInstanceOf[Point], r.nextLongOption, r.nextBoolean)
+    DBCourse(r.nextLongOption, r.nextString, r.nextString, r.nextString,
+      r.nextString, r.nextInt, r.nextString, r.nextString,
+      r.nextGeometry.asInstanceOf[Point], r.nextLongOption, r.nextBoolean)
   )
 
 }

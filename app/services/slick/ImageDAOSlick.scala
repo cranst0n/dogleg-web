@@ -24,7 +24,7 @@ class ImageDAOSlick(implicit val injector: Injector)
   override def insert(image: Image): Image = {
     DB withSession { implicit session =>
       images returning images.map(_.id) into ((image, assignedId) =>
-        image.copy(id = assignedId)
+        image.copy(id = Some(assignedId))
       ) += image
     }
   }

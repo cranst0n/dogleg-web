@@ -10,6 +10,8 @@ case class CourseRating(id: Option[Long], teeName: String, rating: Double,
   slope: Double, frontRating: Double, frontSlope: Double, backRating: Double,
   backSlope: Double, bogeyRating: Double, gender: Gender, holeRatings: List[HoleRating]) {
 
+  lazy val numHoles = holeRatings.size
+
   lazy val par = holeRatings.map(_.par).sum
 
   lazy val yardage = holeRatings.map(_.yardage).sum

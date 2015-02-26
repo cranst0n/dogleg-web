@@ -25,7 +25,7 @@ define(['common'], function() {
     }
 
     $scope.loadCourses = function(num, offset) {
-      handleCourseRequest(courseService.list(undefined, num, offset));
+      handleCourseRequest(courseService.list(num, offset));
     };
 
     $scope.searchCourses = function(searchText, num, offset) {
@@ -127,6 +127,13 @@ define(['common'], function() {
   NewCourseCtrl.$inject = ['$scope', '$location', '$mdToast', 'userService', 'courseService', 'helper'];
 
   var CourseCardCtrl = function($scope, $mdToast, $mdDialog, courseService) {
+
+    $scope.exclusivitySet = [
+      { title: 'Public', value: 'Public' },
+      { title: 'Municipal', value: 'Municipal' },
+      { title: 'Semi Private', value: 'SemiPrivate' },
+      { title: 'Private', value: 'Private' }
+    ];
 
     $scope.promptRating = function(ev) {
       promptRatingName(ev).then(function(answer) {

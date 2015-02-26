@@ -42,7 +42,7 @@ DELETE  /courserequests/:id     @controllers.RequestedCourses.deleteRequest(id: 
 ###########
 POST    /courses                @controllers.Courses.createCourse()
 GET     /courses/user           @controllers.Courses.recentForUser
-GET     /courses                @controllers.Courses.list(lat: Option[Double], lon: Option[Double], num: Int ?= 20, offset: Int ?= 0, approved: Boolean ?= true)
+GET     /courses                @controllers.Courses.list(num: Int ?= 20, offset: Int ?= 0, approved: Option[Boolean], lat: Option[Double], lon: Option[Double])
 GET     /courses/search         @controllers.Courses.search(searchText: String, num: Int ?= 20, offset: Int ?= 0)
 GET     /courses/:id            @controllers.Courses.info(id: Long)
 GET     /courses/raw/:id        @controllers.Courses.raw(id: Long)
@@ -60,11 +60,19 @@ GET     /rounds                 @controllers.Rounds.list(num: Int ?= 20, offset:
 GET     /rounds/:id             @controllers.Rounds.info(id: Long)
 DELETE  /rounds/:id             @controllers.Rounds.deleteRound(id: Long)
 
+GET     /handicap               @controllers.Rounds.currentHandicap(slope: Double, numHoles: Int, time: Long)
+
 ##########
 # Images #
 ##########
-GET     /image/avatar/:id           @controllers.Images.avatar(id: Long)
-GET     /image/raw/:id              @controllers.Images.raw(id: Long)
+GET     /image/avatar/:id       @controllers.Images.avatar(id: Long)
+GET     /image/raw/:id          @controllers.Images.raw(id: Long)
+
+###################
+# Error Reporting #
+###################
+GET     /crashreport            @controllers.CrashReports.list(num: Int ?= 20, offset: Int ?= 0)
+POST    /crashreport            @controllers.CrashReports.submit()
 
 #########################################################################
 # Static                                                                #

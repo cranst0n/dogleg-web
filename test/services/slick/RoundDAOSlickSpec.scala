@@ -32,15 +32,15 @@ object RoundDAOSlickSpec extends Specification with ThrownMessages {
         val round =
           Round(None, user, insertedCourse, rating, new DateTime,
             List(
-              HoleScore(None, 5, 5, 2, 0, true, false, insertedCourse.holes(0)),
-              HoleScore(None, 6, 6, 3, 0, false, true, insertedCourse.holes(1)),
-              HoleScore(None, 2, 2, 1, 0, false, true, insertedCourse.holes(2)),
-              HoleScore(None, 8, 8, 2, 1, false, false, insertedCourse.holes(3)),
-              HoleScore(None, 5, 5, 3, 0, true, true, insertedCourse.holes(4)),
-              HoleScore(None, 3, 3, 1, 0, true, true, insertedCourse.holes(5)),
-              HoleScore(None, 3, 3, 1, 0, true, true, insertedCourse.holes(6)),
-              HoleScore(None, 3, 3, 2, 0, false, true, insertedCourse.holes(7)),
-              HoleScore(None, 6, 6, 3, 0, false, false, insertedCourse.holes(8))
+              HoleScore(None, None, 5, 5, 2, 0, true, false, insertedCourse.holes(0)),
+              HoleScore(None, None, 6, 6, 3, 0, false, true, insertedCourse.holes(1)),
+              HoleScore(None, None, 2, 2, 1, 0, false, true, insertedCourse.holes(2)),
+              HoleScore(None, None, 8, 8, 2, 1, false, false, insertedCourse.holes(3)),
+              HoleScore(None, None, 5, 5, 3, 0, true, true, insertedCourse.holes(4)),
+              HoleScore(None, None, 3, 3, 1, 0, true, true, insertedCourse.holes(5)),
+              HoleScore(None, None, 3, 3, 1, 0, true, true, insertedCourse.holes(6)),
+              HoleScore(None, None, 3, 3, 2, 0, false, true, insertedCourse.holes(7)),
+              HoleScore(None, None, 6, 6, 3, 0, false, false, insertedCourse.holes(8))
             ),
             None, Some(4), false
           )
@@ -75,15 +75,15 @@ object RoundDAOSlickSpec extends Specification with ThrownMessages {
         val round =
           Round(None, user, insertedCourse, rating, new DateTime,
             List(
-              HoleScore(None, 5, 5, 2, 0, true, false, insertedCourse.holes(0)),
-              HoleScore(None, 6, 6, 3, 0, false, true, insertedCourse.holes(1)),
-              HoleScore(None, 2, 2, 1, 0, false, true, insertedCourse.holes(2)),
-              HoleScore(None, 8, 8, 2, 1, false, false, insertedCourse.holes(3)),
-              HoleScore(None, 5, 5, 3, 0, true, true, insertedCourse.holes(4)),
-              HoleScore(None, 3, 3, 1, 0, true, true, insertedCourse.holes(5)),
-              HoleScore(None, 3, 3, 1, 0, true, true, insertedCourse.holes(6)),
-              HoleScore(None, 3, 3, 2, 0, false, true, insertedCourse.holes(7)),
-              HoleScore(None, 6, 6, 3, 0, false, false, insertedCourse.holes(8))
+              HoleScore(None, None, 5, 5, 2, 0, true, false, insertedCourse.holes(0)),
+              HoleScore(None, None, 6, 6, 3, 0, false, true, insertedCourse.holes(1)),
+              HoleScore(None, None, 2, 2, 1, 0, false, true, insertedCourse.holes(2)),
+              HoleScore(None, None, 8, 8, 2, 1, false, false, insertedCourse.holes(3)),
+              HoleScore(None, None, 5, 5, 3, 0, true, true, insertedCourse.holes(4)),
+              HoleScore(None, None, 3, 3, 1, 0, true, true, insertedCourse.holes(5)),
+              HoleScore(None, None, 3, 3, 1, 0, true, true, insertedCourse.holes(6)),
+              HoleScore(None, None, 3, 3, 2, 0, false, true, insertedCourse.holes(7)),
+              HoleScore(None, None, 6, 6, 3, 0, false, false, insertedCourse.holes(8))
             ),
             None, Some(11), true
           )
@@ -119,7 +119,7 @@ object RoundDAOSlickSpec extends Specification with ThrownMessages {
         } getOrElse fail("Round update failed!")
 
         updatedById must beSome.which { r =>
-          r.holeScores(2).score must be equalTo(round.holeScores(2).score + 1)
+          r.holeScores(2).score must be equalTo(insertedRound.holeScores(2).score + 1)
           r.handicap must beSome(13)
           r.handicapOverride must beNone
           r.official must beFalse

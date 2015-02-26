@@ -45,7 +45,9 @@ class Authentication(implicit val injector: Injector) extends DoglegController w
         } { user =>
           if(user.active) {
             val token = uuidGenerator.newUUID.toString
-            Cache.set(token, user.id.get)
+            user.id.map { userId =>
+              Cache.set(token, userId, CacheExpiration)
+            }
             Ok(Json.obj("token" -> token)).withCookies(
               Cookie(AuthTokenCookieKey, token, None, httpOnly = false))
           } else {

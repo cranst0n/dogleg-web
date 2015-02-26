@@ -3,7 +3,7 @@ package services.slick
 import org.specs2.matcher.ThrownMessages
 import org.specs2.mutable.Specification
 
-import models.Course
+import models.{ Course, Exclusivity }
 
 import services.CourseDAO
 
@@ -29,7 +29,8 @@ object CourseDAOSlickSpec extends Specification with ThrownMessages {
 
       val courseToUpdate = originalCourse.copy(
         name = "A", city = "B", state = "C", country = "D",
-        numHoles = 11,
+        numHoles = 11, exclusivity = Exclusivity.Municipal,
+        phoneNumber = "phone",
         holes = originalCourse.holes.take(11),
         ratings = originalCourse.ratings.take(2),
         approved = Option(false)
@@ -46,6 +47,8 @@ object CourseDAOSlickSpec extends Specification with ThrownMessages {
         updatedCourse.state must be equalTo courseToUpdate.state
         updatedCourse.country must be equalTo courseToUpdate.country
         updatedCourse.numHoles must be equalTo courseToUpdate.numHoles
+        updatedCourse.exclusivity must be equalTo courseToUpdate.exclusivity
+        updatedCourse.phoneNumber must be equalTo courseToUpdate.phoneNumber
         updatedCourse.holes must have size(courseToUpdate.holes.size)
         updatedCourse.ratings.map(_.teeName) must contain(exactly("Blue", "White"))
         updatedCourse.approved must beSome(false)

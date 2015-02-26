@@ -7,19 +7,35 @@ case class Hole(id: Option[Long], number: Int, courseId: Option[Long] = None,
 
   lazy val estimateYardage: Int = {
 
-    def impl(features: List[HoleFeature], totalYardage: Double): Double = {
-      features match {
-        case Nil => totalYardage
-        case head :: Nil => totalYardage
-        case head :: second :: tail => {
-          head.estimateCenter.distance(second.estimateCenter) +
-            impl(second :: tail,totalYardage)
+    featureForName("flyby") match {
+      case Some(flybyPath) => {
+        def impl(latLons: List[LatLon]): Double = {
+          latLons match {
+            case first :: second :: _ => {
+              first.distance(second) + impl(latLons.tail)
+            }
+            case _ => 0
+          }
         }
+
+        impl(flybyPath.coordinates).toInt
+      }
+      case None => {
+        def impl(features: List[HoleFeature], totalYardage: Double): Double = {
+          features match {
+            case Nil => totalYardage
+            case head :: Nil => totalYardage
+            case head :: second :: tail => {
+              head.estimateCenter.distance(second.estimateCenter) +
+                impl(second :: tail,totalYardage)
+            }
+          }
+        }
+
+
+        impl(features,0).toInt
       }
     }
-
-
-    impl(features,0).toInt
   }
 
   lazy val estimatePar: Int = {
@@ -33,7 +49,7 @@ case class Hole(id: Option[Long], number: Int, courseId: Option[Long] = None,
   }
 
   def featureForName(name: String): Option[HoleFeature] = {
-    features.find(_.name.toLowerCase == name)
+    features.find(_.name.toLowerCase == name.toLowerCase)
   }
 }
 
@@ -43,4 +59,10 @@ object Hole {
   val Par3MaxDistance = 250
   val Par4MaxDistance = 470
   val Par5MaxDistance = 650
+
+  implicit object HoleOrdering extends scala.math.Ordering[Hole] {
+    def compare(a: Hole, b: Hole): Int = {
+      a.number - b.number
+    }
+  }
 }

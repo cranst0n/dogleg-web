@@ -97,16 +97,22 @@ define(['lodash', 'moment', 'common'], function(_, moment) {
         success(function(response) {
 
           $scope.round.course = response;
-          $scope.round.rating = $scope.round.course.ratings[0];
+
+          if(!angular.isDefined($scope.round.rating)) {
+            $scope.round.rating = $scope.round.course.ratings[0];
+          }
+
           courseService.calcStats($scope.round.course);
 
           if($scope.round.course.numHoles === 18) {
             $scope.holeSets = roundService.holeSets.slice(0);
           } else {
-            $scope.holeSets = roundService.holeSets.slice(1);
+            $scope.holeSets = roundService.holeSets.slice(1, 2);
           }
 
-          $scope.round.holeSet = $scope.holeSets[0];
+          if(!angular.isDefined($scope.round.holeSet)) {
+            $scope.round.holeSet = $scope.holeSets[0];
+          }
 
           $scope.round.holeScores = initHoleScores();
 
@@ -250,6 +256,7 @@ define(['lodash', 'moment', 'common'], function(_, moment) {
   var ShowRoundCtrl = function($scope, $location, $mdToast, user, round, roundService) {
 
     $scope.round = roundService.calcStats(round.data);
+    $scope.selectedCourse = $scope.round.course;
 
     // Angular uses referential equality so this is not ideal, but required
     for(var ix = 0; ix < $scope.round.course.ratings.length; ix++) {
@@ -268,7 +275,6 @@ define(['lodash', 'moment', 'common'], function(_, moment) {
     roundService.info($routeParams.roundId).
       success(function(response) {
         $scope.round = roundService.calcStats(response);
-
 
         // Angular uses referential equality so this is not ideal, but required
         for(var ix = 0; ix < $scope.round.course.ratings.length; ix++) {

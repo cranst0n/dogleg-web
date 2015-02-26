@@ -39,6 +39,7 @@ define(['angular', 'lodash', 'common'], function (angular, _) {
       round.backGIRs = 0;
 
       if(angular.isDefined(round.holeScores) && round.holeScores.length > 0) {
+
         var holeStart = _.min(round.holeScores, function(score) { return score.hole.number; }).hole.number;
         var holeEnd = _.max(round.holeScores, function(score) { return score.hole.number; }).hole.number;
 

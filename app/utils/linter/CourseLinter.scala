@@ -30,11 +30,10 @@ object CourseKmlLinter extends App with CourseLinterApp {
   val fileTypes = Array("kml")
   val lintOp = CourseKmlLintCheck(_)
   val parseCourse = (path: Path) => {
-    KMLMapping.fromKML(Source.fromFile(path.toString).getLines.mkString("\n"),
-      geoCodingService, elevationService
-    ).toCourse.map { course =>
-      Success(course)
-    }
+    KMLMapping(Source.fromFile(path.toString).getLines.mkString("\n")).
+      toCourse(geoCodingService, elevationService).map { course =>
+        Success(course)
+      }
   }
 
   lintApp
@@ -47,7 +46,7 @@ object CourseJsonLinter extends App with CourseLinterApp {
   val parseCourse = (path: Path) => {
 
     val jsVal =
-    Json.parse(Source.fromFile(path.toString).getLines.mkString("\n"))
+      Json.parse(Source.fromFile(path.toString).getLines.mkString("\n"))
 
     Future.successful(
       jsVal.validate[models.Course] match {

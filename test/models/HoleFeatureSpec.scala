@@ -15,7 +15,7 @@ object HoleFeatureSpec extends Specification with ThrownMessages {
 
     "determine it's estimated center" in {
 
-      val feature = HoleFeature("feat",
+      val feature = HoleFeature(None, "feat",
         List(LatLon(9,3),LatLon(0,9),LatLon(3,0)))
 
       feature.estimateCenter must be equalTo(LatLon(4,4))
