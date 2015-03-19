@@ -7,6 +7,7 @@
 ###########
 GET     /                       @controllers.Application.index
 GET     /jsroutes.js            @controllers.Application.jsRoutes()
+GET     /buildinfo              @controllers.Application.buildInfo
 
 ##################
 # Authentication #

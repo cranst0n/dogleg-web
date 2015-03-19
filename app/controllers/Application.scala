@@ -3,8 +3,11 @@ package controllers
 import scaldi.Injector
 
 import play.api._
+import play.api.libs.json._
 import play.api.mvc._
 import play.api.cache._
+
+import build.BuildInfo
 
 class Application(implicit val injector: Injector) extends DoglegController with Security {
 
@@ -39,5 +42,15 @@ class Application(implicit val injector: Injector) extends DoglegController with
     Action { implicit request =>
       Ok(Routes.javascriptRouter(varName)(routeCache: _*)).as(JAVASCRIPT)
     }
+  }
+
+  def buildInfo: Action[Unit] = Action(parse.empty) { implicit request =>
+    Ok(Json.obj(
+      "name" -> BuildInfo.name,
+      "version" -> BuildInfo.version,
+      "scalaVersion" -> BuildInfo.scalaVersion,
+      "sbtVersion" -> BuildInfo.sbtVersion,
+      "buildTime" -> BuildInfo.buildTime
+    ))
   }
 }

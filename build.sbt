@@ -3,32 +3,57 @@ import com.typesafe.sbt.SbtNativePackager._
 import com.typesafe.sbt.packager.archetypes.ServerLoader.{SystemV, Upstart}
 import NativePackagerKeys._
 
+// basics
 name := "dogleg-web"
-
 organization in ThisBuild := "org.dogleg"
+version := "0.1-M1"
 
-version := "0.1-SNAPSHOT"
+// sbt-buildinfo
+buildInfoSettings
+sourceGenerators in Compile <+= buildInfo
+buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
+buildInfoPackage := "build"
+buildInfoKeys ++= Seq[BuildInfoKey](
+  BuildInfoKey.action("buildTime") {
+    System.currentTimeMillis
+  } // re-computed each time at compile
+)
 
+// sbt-release
+releaseSettings
+
+// sbt-native-packager
 maintainer in Linux := "Ian McIntosh <cranston.ian@gmail.com>"
-
 packageSummary in Linux := "Backend web server for Dogleg."
-
 packageDescription := "Dogleg is a golf data management system to record course and round data with GPS tracking and more."
-
 serverLoading in Debian := SystemV
 
 scalaVersion := "2.11.6"
+
+// Scala Compiler Options
+scalacOptions in ThisBuild ++= Seq(
+  "-target:jvm-1.7",
+  "-encoding", "UTF-8",
+  "-deprecation",         // warning and location for usages of deprecated APIs
+  "-feature",             // warning and location for usages of features that should be imported explicitly
+  "-unchecked",           // additional warnings where generated code depends on assumptions
+  "-Xlint",               // recommended additional warnings
+  "-Ywarn-adapted-args",  // Warn if an argument list is modified to match the receiver
+  "-Ywarn-value-discard", // Warn when non-Unit expression results are unused
+  "-Ywarn-inaccessible",
+  "-Ywarn-dead-code"
+)
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 addCommandAlias("deb", "debian:packageBin")
 
+// Dependencies
 resolvers ++= Seq(
   Resolver.url("Edulify Repository", url("http://edulify.github.io/modules/releases/"))(Resolver.ivyStylePatterns),
   "google-sedis-fix" at "http://pk11-scratch.googlecode.com/svn/trunk"
 )
 
-// Dependencies
 libraryDependencies ++= Seq(
   cache, filters, jdbc, ws,
 
@@ -56,32 +81,14 @@ libraryDependencies ++= Seq(
   "org.webjars" % "momentjs"  % "2.9.0"
 )
 
-// Scala Compiler Options
-scalacOptions in ThisBuild ++= Seq(
-  "-target:jvm-1.7",
-  "-encoding", "UTF-8",
-  "-deprecation",         // warning and location for usages of deprecated APIs
-  "-feature",             // warning and location for usages of features that should be imported explicitly
-  "-unchecked",           // additional warnings where generated code depends on assumptions
-  "-Xlint",               // recommended additional warnings
-  "-Ywarn-adapted-args",  // Warn if an argument list is modified to match the receiver
-  "-Ywarn-value-discard", // Warn when non-Unit expression results are unused
-  "-Ywarn-inaccessible",
-  "-Ywarn-dead-code"
-)
-
+// sbt-rjs (sbt-web)
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
-
 pipelineStages := Seq(digest, gzip) // TODO: rjs stage breaks angular injection somewhere
-
-// RequireJS with sbt-rjs (https://github.com/sbt/sbt-rjs#sbt-rjs)
-// ~~~
 RjsKeys.paths += ("jsRoutes" -> ("/jsroutes" -> "empty:"))
-
 RjsKeys.mainModule := "main"
-
 RjsKeys.generateSourceMaps := false
 
+// scoverage
 ScoverageSbtPlugin.ScoverageKeys.coverageExcludedPackages := "<empty>;controllers.javascript.*;controllers.ref.*;views.html.*"
 
 // All work and no play...
