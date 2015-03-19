@@ -2,7 +2,6 @@ import WebKeys._
 
 import com.typesafe.sbt.SbtNativePackager._
 import com.typesafe.sbt.packager.archetypes.ServerLoader.{SystemV, Upstart}
-
 import NativePackagerKeys._
 
 import sbtrelease._
@@ -11,6 +10,9 @@ import ReleaseStateTransformations._
 // basics
 name := "dogleg-web"
 organization in ThisBuild := "org.dogleg"
+
+lazy val root = (project in file(".")).enablePlugins(PlayScala)
+scalaVersion := "2.11.6"
 
 // sbt-buildinfo
 buildInfoSettings
@@ -23,6 +25,12 @@ buildInfoKeys ++= Seq[BuildInfoKey](
   } // re-computed each time at compile
 )
 
+// sbt-native-packager
+maintainer in Linux := "Ian McIntosh <cranston.ian@gmail.com>"
+packageSummary in Linux := "Backend web server for Dogleg."
+packageDescription := "Dogleg is a golf data management system to record course and round data with GPS tracking and more."
+serverLoading in Debian := SystemV
+
 // sbt-release
 releaseSettings
 ReleaseKeys.releaseProcess := Seq[ReleaseStep](
@@ -31,19 +39,12 @@ ReleaseKeys.releaseProcess := Seq[ReleaseStep](
   runTest,                                // : ReleaseStep
   setReleaseVersion,                      // : ReleaseStep
   commitReleaseVersion,                   // : ReleaseStep, performs the initial git checks
+  releaseTask(packageBin in Debian),      // : ReleaseStep, creates Debian package
   tagRelease,                             // : ReleaseStep
   setNextVersion,                         // : ReleaseStep
   commitNextVersion,                      // : ReleaseStep
   pushChanges                             // : ReleaseStep, also checks that an upstream branch is properly configured
 )
-
-// sbt-native-packager
-maintainer in Linux := "Ian McIntosh <cranston.ian@gmail.com>"
-packageSummary in Linux := "Backend web server for Dogleg."
-packageDescription := "Dogleg is a golf data management system to record course and round data with GPS tracking and more."
-serverLoading in Debian := SystemV
-
-scalaVersion := "2.11.6"
 
 // Scala Compiler Options
 scalacOptions in ThisBuild ++= Seq(
@@ -58,10 +59,6 @@ scalacOptions in ThisBuild ++= Seq(
   "-Ywarn-inaccessible",
   "-Ywarn-dead-code"
 )
-
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
-
-addCommandAlias("deb", "debian:packageBin")
 
 // Dependencies
 resolvers ++= Seq(
