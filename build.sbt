@@ -11,7 +11,6 @@ import ReleaseStateTransformations._
 // basics
 name := "dogleg-web"
 organization in ThisBuild := "org.dogleg"
-version := "0.1-M1"
 
 // sbt-buildinfo
 buildInfoSettings
