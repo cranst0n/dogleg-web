@@ -1,7 +1,12 @@
 import WebKeys._
+
 import com.typesafe.sbt.SbtNativePackager._
 import com.typesafe.sbt.packager.archetypes.ServerLoader.{SystemV, Upstart}
+
 import NativePackagerKeys._
+
+import sbtrelease._
+import ReleaseStateTransformations._
 
 // basics
 name := "dogleg-web"
@@ -21,6 +26,17 @@ buildInfoKeys ++= Seq[BuildInfoKey](
 
 // sbt-release
 releaseSettings
+ReleaseKeys.releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,              // : ReleaseStep
+  inquireVersions,                        // : ReleaseStep
+  runTest,                                // : ReleaseStep
+  setReleaseVersion,                      // : ReleaseStep
+  commitReleaseVersion,                   // : ReleaseStep, performs the initial git checks
+  tagRelease,                             // : ReleaseStep
+  setNextVersion,                         // : ReleaseStep
+  commitNextVersion,                      // : ReleaseStep
+  pushChanges                             // : ReleaseStep, also checks that an upstream branch is properly configured
+)
 
 // sbt-native-packager
 maintainer in Linux := "Ian McIntosh <cranston.ian@gmail.com>"
