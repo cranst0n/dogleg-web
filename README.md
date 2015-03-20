@@ -14,9 +14,43 @@ There are a few other projects that can be used in conjuction with this one:
 ### Requirements
 
 1. Typesafe Activator
-1. Postgres
+1. Postgres >= 9.4
   1. ```postgis``` extension
   1. ```pg_trgm``` extension
+1. Redis
+
+### Typical Install
+
+```bash
+sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+sudo apt-get install wget ca-certificates
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install -qq postgresql-9.4
+sudo apt-get install -qq postgresql-9.4-postgis-2.1
+sudo apt-get install -qq postgresql-contrib
+
+# Setup postgres authentication
+sudo -u postgres psql template1
+ALTER USER postgres with encrypted password 'xxxxxxx';
+sudo vim /etc/postgresql/9.4/main/pg_hba.conf
+  # local    all    postgres    md5
+sudo /etc/init.d/postgresql restart
+
+# Create databases for test/production
+psql -c "create user dogleg with password 'dogleg'" -U postgres
+psql -c "alter user dogleg with superuser" -U postgres
+psql -c "create database doglegtest with owner dogleg" -U postgres
+psql -c "create database dogleg with owner dogleg" -U postgres
+psql -c "alter schema public owner to dogleg" -U postgres doglegtest
+psql -c "alter schema public owner to dogleg" -U postgres dogleg
+psql -c "grant all privileges on database doglegtest to dogleg" -U postgres
+psql -c "grant all privileges on database dogleg to dogleg" -U postgres
+
+# Redis
+sudo apt-get install -qq redis-server
+```
 
 ### Testing
 

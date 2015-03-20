@@ -7,6 +7,7 @@ addons:
   postgresql: "9.4"
 before_install:
   - sudo apt-get install -qq postgresql-contrib
+  - sudo apt-get install -qq redis-server
 before_script:
   - psql -c "create user dogleg with password 'dogleg'" -U postgres
   - psql -c "alter user dogleg with superuser" -U postgres

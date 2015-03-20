@@ -54,7 +54,11 @@ class Rounds(implicit val injector: Injector) extends DoglegController with Secu
 
   def updateRound: Action[JsValue] = HasToken(parse.json) { implicit request =>
     expect[Round] { round =>
-      roundDAO.update(round).map { updatedRound =>
+
+      val handicappedRound = handicapService.handicap(
+        round, roundDAO.before(request.user, round.time))
+
+      roundDAO.update(handicappedRound).map { updatedRound =>
         updateRoundHandicaps(request.user, updatedRound.time)
         Ok(Json.toJson(updatedRound))
       } getOrElse notFound("Update failed", "Unknown round")

@@ -13,7 +13,6 @@ trait HandicapService {
   def handicap(round: Round, previous: List[Round]): Round
 
   def handicap(slope: Double, numHoles: Int, previous: List[Round]): Option[Double]
-
 }
 
 class DefaultHandicapService extends HandicapService {
@@ -52,13 +51,13 @@ class DefaultHandicapService extends HandicapService {
             accumulateDifferentials(h.handicapDifferential :: accum, Nil, t)
           }
           case ((a,b) :: t, Nil) => {
-            val hcpDiff = (a.handicapDifferential + b.handicapDifferential) / 2
+            val hcpDiff = (a.handicapDifferential + b.handicapDifferential)
             accumulateDifferentials(hcpDiff :: accum, t, Nil)
           }
           case ((a, b) :: ht, c :: ft) => {
             if(a.time > c.time && b.time > c.time) {
               val hcpDiff =
-                (a.handicapDifferential + b.handicapDifferential) / 2
+                (a.handicapDifferential + b.handicapDifferential)
               accumulateDifferentials(hcpDiff :: accum, ht, fullRounds)
             } else {
               accumulateDifferentials(
@@ -107,8 +106,8 @@ class DefaultHandicapService extends HandicapService {
 
     // Finally update all the holescores net scores
     correctionOpt.map { correction =>
-      netCorrection(correction, round)
-    } getOrElse round
+      netCorrection(correction, withAutoHandicap)
+    } getOrElse withAutoHandicap
   }
 
   override def handicap(slope: Double, numHoles: Int, previous: List[Round]): Option[Double] = {
@@ -119,11 +118,14 @@ class DefaultHandicapService extends HandicapService {
     round.copy(
       holeScores = round.scoreRatings.map { case (score, rating) =>
 
+        // If you're playing 9 holes of an 18 hole course, you need to divide
+        // each holes true handicap by 2 to apply stokes to the appropriate
+        // holes
+        val ratingCorrection = round.course.numHoles / round.numHoles;
+
         val netCorrection =
-          ((handicap - rating.handicap).toDouble / round.numHoles) match {
-            case x if x > 0 => x.ceil.toInt
-            case _ => 0
-          }
+          ((handicap - (rating.handicap.toDouble / ratingCorrection).ceil + 1) /
+            round.numHoles).ceil.toInt.max(0)
 
         score.copy(netScore = score.score - netCorrection)
       }

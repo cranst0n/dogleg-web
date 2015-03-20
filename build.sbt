@@ -87,7 +87,7 @@ libraryDependencies ++= Seq(
 
   // WebJars (i.e. client-side) dependencies
   "org.webjars" % "requirejs" % "2.1.16",
-  "org.webjars" % "angularjs" % "1.3.14" exclude("org.webjars", "jquery"),
+  "org.webjars" % "angularjs" % "1.3.15" exclude("org.webjars", "jquery"),
   "org.webjars" % "cryptojs"  % "3.1.2",
   "org.webjars" % "lodash"    % "3.3.1",
   "org.webjars" % "momentjs"  % "2.9.0"
