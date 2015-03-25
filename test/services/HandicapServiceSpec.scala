@@ -41,7 +41,7 @@ object HandicapServiceSpec extends PlaySpecification {
       hcpService.handicap(mockedRounds(9, 9)) must beNone
 
        // Averages the lowest (2) half rounds together to make one full round
-      hcpService.handicap(mockedRounds(10, 9)) must beSome(2.9)
+      hcpService.handicap(mockedRounds(10, 9)) must beSome(5.8)
     }
 
     "give accurate handicap with mixed half/full rounds" in {
