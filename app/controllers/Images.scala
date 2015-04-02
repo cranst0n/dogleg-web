@@ -15,11 +15,12 @@ class Images(implicit val injector: Injector) extends DoglegController with Secu
 
   lazy val imageDAO = inject[ImageDAO]
 
-  def avatar(id: Long): Action[Unit] = Action(parse.empty) { implicit request =>
+  def avatar(id: Long, width: Option[Int], height: Option[Int]): Action[Unit] = Action(parse.empty) { implicit request =>
     imageDAO.findById(id).map { image =>
       Ok(
         ScrimageTools.toBytes(Scrimage(image.data).
-          cover(Images.AvatarSize, Images.AvatarSize).toBufferedImage, "png")
+          cover(width.getOrElse(Images.AvatarSize),
+            width.getOrElse(Images.AvatarSize)).toBufferedImage, "png")
       ).as("image/png")
     } getOrElse notFound("Unknown image ID")
   }

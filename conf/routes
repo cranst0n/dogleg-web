@@ -66,7 +66,7 @@ GET     /handicap               @controllers.Rounds.currentHandicap(slope: Doubl
 ##########
 # Images #
 ##########
-GET     /image/avatar/:id       @controllers.Images.avatar(id: Long)
+GET     /image/avatar/:id       @controllers.Images.avatar(id: Long, width: Option[Int], height: Option[Int])
 GET     /image/raw/:id          @controllers.Images.raw(id: Long)
 
 ###################
