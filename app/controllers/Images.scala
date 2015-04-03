@@ -2,14 +2,20 @@ package controllers
 
 import scaldi.Injector
 
+import org.apache.commons.io.IOUtils
+
 import com.sksamuel.scrimage.{ Image => Scrimage }
 import com.sksamuel.scrimage.{ ImageTools => ScrimageTools }
 
+import play.api.Play
+import play.api.Play.current
 import play.api.mvc._
 
 import models.Image
 
 import services.ImageDAO
+
+import utils.FileUtils
 
 class Images(implicit val injector: Injector) extends DoglegController with Security {
 
@@ -34,4 +40,9 @@ class Images(implicit val injector: Injector) extends DoglegController with Secu
 
 object Images {
   val AvatarSize = 30
+  val DefaultAvatar = {
+    Play.resourceAsStream("public/images/default_avatar.png") map { stream =>
+      Image(None, IOUtils.toByteArray(stream))
+    } getOrElse Image(None, Array())
+  }
 }

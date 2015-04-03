@@ -12,7 +12,7 @@ object User {
 
   private[this] val passwordlessWrites = new Writes[User] {
     override def writes(u: User): JsValue = {
-      Json.toJson(u.copy(email = "", password = ""))(defaultWrites)
+      Json.toJson(u.copy(password = ""))(defaultWrites)
     }
     private[this] val defaultWrites = Json.writes[User]
   }

@@ -3,6 +3,7 @@ package controllers
 import scaldi.Injector
 
 import com.sksamuel.scrimage.{ Image => Scrimage }
+import com.sksamuel.scrimage.{ ImageTools => ScrimageTools }
 
 import play.api.Play
 import play.api.libs.json._
@@ -12,7 +13,7 @@ import play.api.mvc._
 
 import models.{ CourseSummary, Image, User }
 
-import services.CourseDAO
+import services.{ CourseDAO, ImageDAO }
 
 case class ChangePasswordRequest(oldPassword: String, newPassword: String,
   newPasswordConfirm: String)
@@ -29,6 +30,7 @@ object UpdateProfileRequest {
 
 class Users(implicit val injector: Injector) extends DoglegController with Security {
 
+  lazy val imageDAO = inject[ImageDAO]
   lazy val courseDAO = inject[CourseDAO]
 
   private[this] val signupEnabled =
@@ -102,6 +104,19 @@ class Users(implicit val injector: Injector) extends DoglegController with Secur
         } getOrElse badRequest("Old password incorrect")
       }("A user may only change their own password")
     }
+  }
+
+  def avatar(id: Long, width: Option[Int], height: Option[Int]): Action[Unit] = Action(parse.empty) { implicit request =>
+    val image =
+      userDAO.findById(id).flatMap { user =>
+        user.profile.avatar
+      } getOrElse Images.DefaultAvatar
+
+      Ok(
+        ScrimageTools.toBytes(Scrimage(image.data).
+          cover(width.getOrElse(Images.AvatarSize),
+            width.getOrElse(Images.AvatarSize)).toBufferedImage, "png")
+      ).as("image/png")
   }
 
   def changeAvatar(id: Long): Action[JsValue] = HasToken(parse.json) { implicit request =>

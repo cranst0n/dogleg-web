@@ -26,6 +26,7 @@ PUT     /users/:id              @controllers.Users.updateUser(id: Long)
 PUT     /users/:id/profile      @controllers.Users.updateProfile(id: Long)
 PUT     /users/:id/password     @controllers.Users.changePassword(id: Long)
 PUT     /users/:id/avatar       @controllers.Users.changeAvatar(id: Long)
+GET     /users/avatar/:id       @controllers.Users.avatar(id: Long, width: Option[Int], height: Option[Int])
 DELETE  /users/:id              @controllers.Users.deleteUser(id: Long)
 
 ###################
