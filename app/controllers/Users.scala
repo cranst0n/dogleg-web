@@ -44,9 +44,12 @@ class Users(implicit val injector: Injector) extends DoglegController with Secur
   def createUser(): Action[JsValue] = Action(parse.json) { implicit request =>
     expect[User] { user =>
       if(signupEnabled) {
-        Ok(Json.toJson(userDAO.insert(user)))
+        userDAO.findByName(user.name) match {
+          case Some(_) => badRequest(s"'${user.name}' is already taken.")
+          case None => Ok(Json.toJson(userDAO.insert(user)))
+        }
       } else {
-        NotImplemented("Sign up not allowed at this time.")
+        notImplemented("Sign up not allowed at this time.")
       }
     }
   }

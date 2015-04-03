@@ -41,6 +41,9 @@ trait DoglegController extends Controller {
   def notFound(message: String, details: String = ""): Result =
     jsonStatus(NOT_FOUND, message, details)
 
+  def notImplemented(message: String, details: String = ""): Result =
+    jsonStatus(NOT_IMPLEMENTED, message, details)
+
   def unauthorized(message: String, details: String = ""): Result =
     jsonStatus(UNAUTHORIZED, message, details)
 
