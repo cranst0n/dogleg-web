@@ -1,11 +1,14 @@
 package services.slick
 
+import scala.slick.jdbc.{ StaticQuery => Q }
+
 import scaldi.{ Injectable, Injector }
 
 import play.api.Play.current
 import play.api.db.slick._
 
 import DoglegPostgresDriver.simple._
+import Implicits._
 import Tables._
 
 import models.{ Image, User }
@@ -25,6 +28,18 @@ class UserDAOSlick(implicit val injector: Injector)
   override def findByName(name: String): Option[User] = {
     DB withSession { implicit session =>
       users.filter(_.name === name).firstOption.map(_.toUser)
+    }
+  }
+
+  override def searchByName(text: String) = {
+
+    val sanitized =
+      text.replaceAll("\\p{Punct}+", " ").replaceAll(" +", " ")
+
+    DB withSession { implicit session =>
+      Q.queryNA[DBUser](s"""
+        select * from dogleguser where name ilike '%${sanitized}%'
+      """).list.map(_.toUser)
     }
   }
 

@@ -22,6 +22,12 @@ object ChangePasswordRequest {
   implicit val JsonFormat = Json.format[ChangePasswordRequest]
 }
 
+case class ResetPasswordRequest(newPassword: String, newPasswordConfirm: String)
+
+object ResetPasswordRequest {
+  implicit val JsonFormat = Json.format[ResetPasswordRequest]
+}
+
 case class UpdateProfileRequest(home: Option[String], favoriteCourse: Option[CourseSummary])
 
 object UpdateProfileRequest {
@@ -39,6 +45,10 @@ class Users(implicit val injector: Injector) extends DoglegController with Secur
   def user(id: Long): Action[Unit] = HasToken(parse.empty) { implicit request =>
     userDAO.findById(id).map(u => Ok(Json.toJson(u))).
       getOrElse(notFound("Unknown user"))
+  }
+
+  def searchByName(name: String): Action[Unit] = HasToken(parse.empty) { implicit request =>
+    Ok(Json.toJson(userDAO.searchByName(name)))
   }
 
   def createUser(): Action[JsValue] = Action(parse.json) { implicit request =>
@@ -106,6 +116,18 @@ class Users(implicit val injector: Injector) extends DoglegController with Secur
           }
         } getOrElse badRequest("Old password incorrect")
       }("A user may only change their own password")
+    }
+  }
+
+  def resetPassword(id: Long): Action[JsValue] = Admin(parse.json) { implicit request =>
+    expect[ResetPasswordRequest] { resetRequest =>
+      userDAO.findById(id).map { user =>
+        if(resetRequest.newPassword == resetRequest.newPasswordConfirm) {
+          Ok(Json.toJson(userDAO.changePassword(user, resetRequest.newPassword)))
+        } else {
+          badRequest("Passwords do not match")
+        }
+      } getOrElse notFound("Unknown user")
     }
   }
 

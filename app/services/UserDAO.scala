@@ -18,6 +18,8 @@ trait UserDAO {
 
   def findByName(name: String): Option[User]
 
+  def searchByName(text: String): List[User]
+
   def findByEmail(email: String): Option[User]
 
   def findById(id: Long): Option[User]

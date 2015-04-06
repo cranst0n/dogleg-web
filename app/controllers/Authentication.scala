@@ -41,7 +41,7 @@ class Authentication(implicit val injector: Injector) extends DoglegController w
       },
       credentials => {
         userDAO.authenticate(credentials.username, credentials.password).fold {
-          unauthorized("User not registered")
+          unauthorized("Invalid username/password")
         } { user =>
           if(user.active) {
             val token = uuidGenerator.newUUID.toString
