@@ -53,7 +53,7 @@ define(['lodash'], function(_) {
         pluck('url').
         map(function(url) { return url.slice(1); }).
         each(function(tabUrl, ix) {
-          if(nextUrl === tabUrl) {
+          if(nextUrl.startsWith(tabUrl)) {
             index = ix;
             return;
           }

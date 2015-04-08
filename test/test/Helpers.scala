@@ -141,7 +141,7 @@ object Helpers extends Mockito {
         val gir = score - putts <= holeRating.par - 2
 
         HoleScore(None, None, score, netScore, putts,
-          penaltyStrokes, fairwayHit, gir, hole)
+          penaltyStrokes, fairwayHit, gir, Nil, hole)
       }
 
     Round(None, user, course, rating, new DateTime(), holeScores,

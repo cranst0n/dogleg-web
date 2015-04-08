@@ -20,15 +20,15 @@ object RoundSpec extends Specification with ThrownMessages {
       val round =
         Round(Some(1), simpleUser, Rehoboth, RehobothBlues, new DateTime(),
           List(
-            HoleScore(None, Some(1), 5, 5, 2, 0, true, false, Hole(None, 1, None)),
-            HoleScore(None, Some(1), 6, 6, 3, 0, false, true, Hole(None, 2, None)),
-            HoleScore(None, Some(1), 2, 2, 1, 0, false, true, Hole(None, 3, None)),
-            HoleScore(None, Some(1), 8, 8, 2, 1, false, false, Hole(None, 4, None)),
-            HoleScore(None, Some(1), 5, 5, 3, 0, true, true, Hole(None, 5, None)),
-            HoleScore(None, Some(1), 3, 3, 1, 0, true, true, Hole(None, 6, None)),
-            HoleScore(None, Some(1), 3, 3, 1, 0, true, true, Hole(None, 7, None)),
-            HoleScore(None, Some(1), 3, 3, 2, 0, false, true, Hole(None, 8, None)),
-            HoleScore(None, Some(1), 6, 6, 3, 0, false, false, Hole(None, 9, None))
+            HoleScore(None, Some(1), 5, 5, 2, 0, true, false, Nil, Hole(None, 1, None)),
+            HoleScore(None, Some(1), 6, 6, 3, 0, false, true, Nil, Hole(None, 2, None)),
+            HoleScore(None, Some(1), 2, 2, 1, 0, false, true, Nil, Hole(None, 3, None)),
+            HoleScore(None, Some(1), 8, 8, 2, 1, false, false, Nil, Hole(None, 4, None)),
+            HoleScore(None, Some(1), 5, 5, 3, 0, true, true, Nil, Hole(None, 5, None)),
+            HoleScore(None, Some(1), 3, 3, 1, 0, true, true, Nil, Hole(None, 6, None)),
+            HoleScore(None, Some(1), 3, 3, 1, 0, true, true, Nil, Hole(None, 7, None)),
+            HoleScore(None, Some(1), 3, 3, 2, 0, false, true, Nil, Hole(None, 8, None)),
+            HoleScore(None, Some(1), 6, 6, 3, 0, false, false, Nil, Hole(None, 9, None))
           ),
           None, Some(18), true
         )

@@ -31,6 +31,7 @@ class ProductionModule extends Module {
   bind[CourseRatingDAO] to new CourseRatingDAOSlick
   bind[CourseDAO] to new CourseDAOSlick
 
+  bind[ShotDAO] to new ShotDAOSlick
   bind[HoleScoreDAO] to new HoleScoreDAOSlick
   bind[RoundDAO] to new RoundDAOSlick
 

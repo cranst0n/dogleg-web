@@ -28,6 +28,7 @@ object Tables {
   lazy val holeFeatures = TableQuery[HoleFeatures]
   lazy val rounds = TableQuery[Rounds]
   lazy val holeScores = TableQuery[HoleScores]
+  lazy val shots = TableQuery[Shots]
 
   lazy val courseImages = TableQuery[CourseImages]
   lazy val roundImages = TableQuery[RoundImages]
@@ -264,7 +265,9 @@ object Tables {
     roundId: Option[Long], holeId: Long) {
 
     def toHoleScore(implicit session: SessionDef) = {
-      HoleScore(id, roundId, score, netScore, putts, penaltyStrokes, fairwayHit, gir,
+      HoleScore(id, roundId, score, netScore, putts, penaltyStrokes, fairwayHit,
+        gir,
+        shots.filter(_.holeScoreId === id).list.map(_.toShot),
         holes.filter(_.id === holeId).first.toHole)
     }
   }
@@ -280,6 +283,27 @@ object Tables {
     def roundId = column[Option[Long]]("roundid")
     def holeId = column[Long]("holeid")
     def * = (id.?, score, netScore, putts, penaltyStrokes, fairwayHit, gir, roundId, holeId) <> ((DBHoleScore.apply _).tupled, DBHoleScore.unapply)
+  }
+
+  case class DBShot(id: Option[Long], sequence: Int, clubId: Int,
+    locationStart: Point, locationEnd: Point, holeScoreId: Option[Long]) {
+
+    def toShot(implicit session: SessionDef) = {
+      Shot(id, sequence, Club.forId(clubId),
+        LatLon.fromVividPoint(locationStart),
+        LatLon.fromVividPoint(locationEnd), holeScoreId)
+    }
+  }
+
+  class Shots(tag: Tag) extends Table[DBShot](tag, "shot") {
+    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+    def sequence = column[Int]("sequence")
+    def clubId = column[Int]("clubid")
+    def locationStart = column[Point]("locationstart")
+    def locationEnd = column[Point]("locationend")
+    def holeScoreId = column[Long]("holescoreid")
+
+    def * = (id.?, sequence, clubId, locationStart, locationEnd, holeScoreId.?) <> ((DBShot.apply _).tupled, DBShot.unapply)
   }
 
   case class AttachedImage(entityId: Long, imageId: Long)

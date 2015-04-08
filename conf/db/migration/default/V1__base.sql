@@ -133,7 +133,8 @@ create table if not exists holerating (
   yardage                    smallint not null,
   handicap                   smallint not null,
   ratingid                   bigint not null references courserating(id)
-    on delete cascade on update cascade
+    on delete cascade on update cascade,
+  constraint holeratingid primary key (id)
 );
 
 create index on holerating(ratingid);
@@ -160,7 +161,8 @@ create table if not exists holefeature (
   name                       text not null,
   coordinates                geometry not null,
   holeid                     bigint not null references hole(id)
-    on delete cascade on update cascade
+    on delete cascade on update cascade,
+  constraint holefeatureid primary key (id)
 );
 
 create index on holefeature (holeid);
@@ -180,7 +182,8 @@ create table if not exists requestedcourse (
   requestorid                bigint not null references dogleguser(id)
     on delete cascade on update cascade,
   fulfilledby                bigint references course(id)
-    on delete set null on update cascade
+    on delete set null on update cascade,
+  constraint requestedcourseid primary key (id)
 );
 
 create index on requestedcourse (requestorid);
@@ -232,8 +235,25 @@ create table if not exists holescore (
   roundid                    bigint not null references round(id)
     on delete cascade on update cascade,
   holeid                     bigint not null references hole(id)
-    on delete cascade on update cascade
+    on delete cascade on update cascade,
+  constraint holescoreid primary key (id)
 );
 
 create index on holescore (roundid);
 create index on holescore (holeid);
+
+----------------
+-- hole score --
+----------------
+create table if not exists shot (
+  id                         bigserial,
+  sequence                   int not null,
+  clubid                     int not null,
+  locationstart              geometry,
+  locationend                geometry,
+  holescoreid                bigint not null references holescore(id)
+    on delete cascade on update cascade,
+  constraint shotid primary key (id)
+);
+
+create index on shot(holescoreid);

@@ -57,7 +57,7 @@ define(['lodash', 'moment', 'common'], function(_, moment) {
     $scope.holeSets = roundService.holeSets;
 
     $scope.$watch('selectedCourse', function(courseSummary) {
-      if(angular.isDefined(courseSummary)) {
+      if(angular.isDefined(courseSummary) && angular.isObject(courseSummary) && angular.isDefined(courseSummary.id)) {
         $scope.courseSelected(courseSummary);
       }
     }, true);
