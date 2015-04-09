@@ -36,6 +36,8 @@ object UpdateProfileRequest {
 
 class Users(implicit val injector: Injector) extends DoglegController with Security {
 
+  private[this] val avatarMaxSize = 10 * 1024 * 1024
+
   lazy val imageDAO = inject[ImageDAO]
   lazy val courseDAO = inject[CourseDAO]
 
@@ -144,7 +146,7 @@ class Users(implicit val injector: Injector) extends DoglegController with Secur
       ).as("image/png")
   }
 
-  def changeAvatar(id: Long): Action[JsValue] = HasToken(parse.json) { implicit request =>
+  def changeAvatar(id: Long): Action[JsValue] = HasToken(parse.json(maxLength = avatarMaxSize)) { implicit request =>
     expect[Option[FileUpload]] { file =>
       sameUserOrAdmin(id) {
 
