@@ -31,7 +31,7 @@
       'angular-animate':          '../lib/angularjs/angular-animate',
       'angular-cookies':          '../lib/angularjs/angular-cookies',
       'angular-aria':             '../lib/angularjs/angular-aria',
-      'angular-material':         '//rawgit.com/angular/bower-material/master/angular-material',
+      'angular-material':         '../lib/angular-material/angular-material',
       'md-date-time':             '//rawgit.com/SimeonC/md-date-time/master/dist/md-date-time',
       'lodash' :                  '../lib/lodash/lodash',
       'moment':                   '../lib/momentjs/min/moment-with-locales',

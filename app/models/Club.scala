@@ -114,3 +114,5 @@ case object Wedge64 extends Club {  override val id = 464; override val name = s
 case object Putter extends Club {  override val id = 500; override val name = "Putter" }
 
 case object Unknown extends Club {  override val id = 1000; override val name = "Unknown" }
+
+case object FinishHole extends Club {  override val id = 2000; override val name = "Finish Hole" }

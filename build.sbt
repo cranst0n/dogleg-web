@@ -90,7 +90,8 @@ libraryDependencies ++= Seq(
   "org.webjars" % "angularjs" % "1.3.15" exclude("org.webjars", "jquery"),
   "org.webjars" % "cryptojs"  % "3.1.2",
   "org.webjars" % "lodash"    % "3.3.1",
-  "org.webjars" % "momentjs"  % "2.9.0"
+  "org.webjars" % "momentjs"  % "2.9.0",
+  "org.webjars" % "angular-material" % "0.8.3"
 )
 
 // sbt-rjs (sbt-web)
