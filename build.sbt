@@ -71,7 +71,7 @@ libraryDependencies ++= Seq(
 
   // server-side
   "org.scaldi"                %% "scaldi"              % "0.5.4",
-  "org.scaldi"                %% "scaldi-play"         % "0.5.3",
+  "org.scaldi"                %% "scaldi-play"         % "0.5.4",
   "com.github.tototoshi"      %% "play-flyway"         % "1.2.1",
   "com.typesafe.play"         %% "play-slick"          % "0.8.1",
   "org.postgresql"            %  "postgresql"          % "9.4-1201-jdbc41",
@@ -89,7 +89,7 @@ libraryDependencies ++= Seq(
   "org.webjars" % "requirejs" % "2.1.17",
   "org.webjars" % "angularjs" % "1.3.15" exclude("org.webjars", "jquery"),
   "org.webjars" % "cryptojs"  % "3.1.2",
-  "org.webjars" % "lodash"    % "3.3.1",
+  "org.webjars" % "lodash"    % "3.6.0",
   "org.webjars" % "momentjs"  % "2.9.0",
   "org.webjars" % "angular-material" % "0.8.3"
 )

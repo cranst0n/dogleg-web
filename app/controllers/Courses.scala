@@ -156,6 +156,12 @@ class Courses(implicit val injector: Injector) extends DoglegController with Sec
     } getOrElse notFound("Course not found", "Unknown ID")
   }
 
+  def kml(id: Long): Action[Unit] = Action(parse.empty) { implicit request =>
+    courseDAO.findById(id).map { course =>
+      Ok(KMLMapping(course).kml)
+    } getOrElse notFound("Course not found", "Unknown ID")
+  }
+
   private[this] def parseCourseFiles(courseFiles: List[FileUpload])(implicit request: TokenRequest[JsValue]): Future[Try[List[Course]]] = {
     Future.sequence(courseFiles.map(parseCourseFile)).map { list =>
       list.filter(_.isFailure) match {

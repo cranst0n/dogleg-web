@@ -50,6 +50,7 @@ GET     /courses                    @controllers.Courses.list(num: Int ?= 20, of
 GET     /courses/search             @controllers.Courses.search(searchText: String, num: Int ?= 20, offset: Int ?= 0)
 GET     /courses/:id                @controllers.Courses.info(id: Long)
 GET     /courses/raw/:id            @controllers.Courses.raw(id: Long)
+GET     /courses/kml/:id            @controllers.Courses.kml(id: Long)
 PUT     /courses/approve            @controllers.Courses.approve
 POST    /courses/parseFile          @controllers.Courses.parseFile
 POST    /courses/importFiles        @controllers.Courses.importFiles
