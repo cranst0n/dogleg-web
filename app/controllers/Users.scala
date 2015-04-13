@@ -13,7 +13,7 @@ import play.api.mvc._
 
 import models.{ CourseSummary, Image, User }
 
-import services.{ CourseDAO, ImageDAO }
+import services.{ CourseDAO, ImageDAO, MailerService }
 
 case class ChangePasswordRequest(oldPassword: String, newPassword: String,
   newPasswordConfirm: String)
@@ -38,6 +38,7 @@ class Users(implicit val injector: Injector) extends DoglegController with Secur
 
   private[this] val avatarMaxSize = 10 * 1024 * 1024
 
+  lazy val mailer = inject[MailerService]
   lazy val imageDAO = inject[ImageDAO]
   lazy val courseDAO = inject[CourseDAO]
 
@@ -58,7 +59,14 @@ class Users(implicit val injector: Injector) extends DoglegController with Secur
       if(signupEnabled) {
         userDAO.findByName(user.name) match {
           case Some(_) => badRequest(s"'${user.name}' is already taken.")
-          case None => Ok(Json.toJson(userDAO.insert(user)))
+          case None => {
+            mailer.selfAddress.map { selfAddress =>
+              mailer.sendText(selfAddress, selfAddress,
+                s"New User: ${user.name}",
+                s"A new user has signed up: ${user.name}")
+            }
+            Ok(Json.toJson(userDAO.insert(user)))
+          }
         }
       } else {
         notImplemented("Sign up not allowed at this time.")
@@ -160,7 +168,15 @@ class Users(implicit val injector: Injector) extends DoglegController with Secur
 
   def deleteUser(id: Long): Action[Unit] = HasToken(parse.empty) { implicit request =>
     sameUserOrAdmin(id) {
+      val deletedUser = userDAO.findById(id)
       if(userDAO.delete(id) == 1) {
+
+        mailer.selfAddress.map { selfAddress =>
+          mailer.sendText(selfAddress, selfAddress,
+            s"""User Deleted: ${deletedUser.map(_.name).getOrElse("???")}""",
+            s"""A user has been deleted: ${deletedUser.map(_.name).getOrElse("???")}""")
+        }
+
         ok("User deleted")
       } else {
         notFound("Unknown user")

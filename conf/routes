@@ -75,6 +75,7 @@ GET     /image/raw/:id              @controllers.Images.raw(id: Long)
 # Error Reporting #
 ###################
 GET     /crashreport                @controllers.CrashReports.list(num: Int ?= 20, offset: Int ?= 0)
+GET     /crashreport/:id            @controllers.CrashReports.byId(id: Long)
 POST    /crashreport                @controllers.CrashReports.submit()
 
 #########################################################################

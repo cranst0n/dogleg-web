@@ -12,6 +12,7 @@ class ProductionModule extends Module {
 
   bind[TimeSource] to TimeSource.system
   bind[UUIDGenerator] to new DefaultUUIDGenerator
+  bind[MailerService] to MailerService.PlayMailer
 
   bind[GeoCodingService] to new GoogleGeoCodingService
   // Google elevation service is particular about the request rate

@@ -83,7 +83,7 @@ libraryDependencies ++= Seq(
   "com.sksamuel.scrimage"     %% "scrimage-core"       % "1.4.2",
   "com.sksamuel.scrimage"     %% "scrimage-canvas"     % "1.4.2",
   "com.typesafe.play.plugins" %% "play-plugins-redis"  % "2.3.1",
-  "com.typesafe.play.plugins" %% "play-plugins-mailer" % "2.3.1",
+  "com.typesafe.play"         %% "play-mailer"         % "2.4.0",
 
   // WebJars (i.e. client-side) dependencies
   "org.webjars" % "requirejs" % "2.1.17",

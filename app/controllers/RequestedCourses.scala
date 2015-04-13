@@ -7,7 +7,7 @@ import play.api.mvc._
 
 import models.RequestedCourse
 
-import services.{ CourseDAO, RequestedCourseDAO, TimeSource }
+import services.{ CourseDAO, MailerService, RequestedCourseDAO, TimeSource }
 
 case class CourseRequest(name: String, city: String, state: String,
   country: String, website: Option[String], comment: Option[String])
@@ -19,6 +19,7 @@ object CourseRequest {
 class RequestedCourses(implicit val injector: Injector) extends DoglegController with Security {
 
   lazy val timeSource = inject[TimeSource]
+  lazy val mailer = inject[MailerService]
   lazy val requestedCourseDAO = inject[RequestedCourseDAO]
   lazy val courseDAO = inject[CourseDAO]
 
@@ -28,6 +29,25 @@ class RequestedCourses(implicit val injector: Injector) extends DoglegController
         courseRequest.city, courseRequest.state, courseRequest.country,
         courseRequest.website, courseRequest.comment, timeSource.now,
         Some(request.user), None)
+
+      mailer.selfAddress.map { selfAddress =>
+        mailer.sendText(selfAddress, selfAddress,
+          s"Course Request: ${courseRequest.name}",
+          s"""
+            |  A new course request has been created:
+            |
+            |    Requested by: ${request.user.name}
+            |    Requested:    ${timeSource.now.toString("MMM dd yyyy @ hh:mma")}
+            |
+            |    Name:         ${courseRequest.name}
+            |    City:         ${courseRequest.city}
+            |    State:        ${courseRequest.state}
+            |    Country:      ${courseRequest.country}
+            |    Website:      ${courseRequest.website.getOrElse("N/a")}
+            |    Comment:      ${courseRequest.comment.getOrElse("N/a")}
+            |
+            |""".stripMargin)
+      }
 
       Ok(Json.toJson(requestedCourseDAO.insert(toInsert)))
     }
