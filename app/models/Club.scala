@@ -42,6 +42,7 @@ object Club {
       case Wood7.id => Wood7
       case Wood9.id => Wood9
       case Wood11.id => Wood11
+      case Hybrid1.id => Hybrid1
       case Hybrid2.id => Hybrid2
       case Hybrid3.id => Hybrid3
       case Hybrid4.id => Hybrid4
@@ -59,6 +60,7 @@ object Club {
       case Iron7.id => Iron7
       case Iron8.id => Iron8
       case Iron9.id => Iron9
+      case WedgeP.id => WedgeP
       case Wedge50.id => Wedge50
       case Wedge52.id => Wedge52
       case Wedge54.id => Wedge54
@@ -83,6 +85,7 @@ case object Wood7 extends Club {  override val id = 107; override val name = "7 
 case object Wood9 extends Club {  override val id = 109; override val name = "9 Wood" }
 case object Wood11 extends Club {  override val id = 111; override val name = "11 Wood" }
 
+case object Hybrid1 extends Club {  override val id = 201; override val name = "1 Hybrid" }
 case object Hybrid2 extends Club {  override val id = 202; override val name = "2 Hybrid" }
 case object Hybrid3 extends Club {  override val id = 203; override val name = "3 Hybrid" }
 case object Hybrid4 extends Club {  override val id = 204; override val name = "4 Hybrid" }
@@ -102,6 +105,7 @@ case object Iron7 extends Club {  override val id = 307; override val name = "7 
 case object Iron8 extends Club {  override val id = 308; override val name = "8 Iron" }
 case object Iron9 extends Club {  override val id = 309; override val name = "9 Iron" }
 
+case object WedgeP extends Club {  override val id = 445; override val name = s"Pitching Wedge" }
 case object Wedge50 extends Club {  override val id = 450; override val name = s"50$Degree Wedge" }
 case object Wedge52 extends Club {  override val id = 452; override val name = s"52$Degree Wedge" }
 case object Wedge54 extends Club {  override val id = 454; override val name = s"54$Degree Wedge" }
