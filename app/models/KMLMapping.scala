@@ -76,7 +76,8 @@ case class KMLMapping(name: String, placemarks: List[KMLPlacemark],
 
           }.sorted
 
-        val ratings = courseRatings.getOrElse(Nil).sorted
+        val ratings =
+          courseRatings orElse originalCourse.map(_.ratings) getOrElse Nil
 
         geoCodeLookup.map { geoCode =>
           Course(courseId, name, courseCity.getOrElse(geoCode.city),
@@ -111,14 +112,16 @@ case class KMLMapping(name: String, placemarks: List[KMLPlacemark],
             <name>{ name }</name>
             <open>0</open>
             { placemarks.map(placemarkElem) }
-            <ratings>
-              {
-                originalCourse.map { shit =>
-                  Json.stringify(Json.toJson(shit.ratings))
-                }.getOrElse("")
+            {
+              originalCourse match {
+                case Some(course) => {
+                  <ratings>
+                    { Json.stringify(Json.toJson(course.ratings)) }
+                  </ratings>
+                }
+                case None =>
               }
-            </ratings>
-
+            }
           </Folder>
         </Document>
       </kml>
@@ -139,18 +142,10 @@ case class KMLMapping(name: String, placemarks: List[KMLPlacemark],
 
 
     placemark.locations match {
-      case head :: tail :: _ => {
+      case head :: second :: _ => {
         <Placemark>
           <name>{ placemark.name }</name>
-          <ExtendedData>
-            {
-              placemark.extendedData.map { case (key, value) =>
-                <Data name={key}>
-                  <value>{ value }</value>
-                </Data>
-              }
-            }
-          </ExtendedData>
+          { placemarkExtendedDataElem(placemark) }
           <LineString>
             <coordinates>
               { coordinateString }
@@ -161,20 +156,29 @@ case class KMLMapping(name: String, placemarks: List[KMLPlacemark],
       case _ => {
         <Placemark>
           <name>{ placemark.name }</name>
-          <ExtendedData>
-            {
-              placemark.extendedData.map { case (key, value) =>
-                <Data name={key}>
-                  <value>{ value }</value>
-                </Data>
-              }
-            }
-          </ExtendedData>
+          { placemarkExtendedDataElem(placemark) }
           <Point>
             <coordinates>{ coordinateString }</coordinates>
           </Point>
         </Placemark>
       }
+    }
+  }
+
+  private def placemarkExtendedDataElem(placemark: KMLPlacemark) = {
+    placemark.extendedData match {
+      case m if m.nonEmpty => {
+        <ExtendedData>
+          {
+            m.map { case (key, value) =>
+              <Data name={key}>
+                <value>{ value }</value>
+              </Data>
+            }
+          }
+        </ExtendedData>
+      }
+      case _ =>
     }
   }
 
@@ -216,15 +220,15 @@ object KMLMapping {
 
     val homePlacemark = KMLPlacemark("Home", List(course.location),
       Map(
-        "id" -> course.id.getOrElse(-1).toString,
-        "city" -> course.city,
-        "state" -> course.state,
-        "country" -> course.country,
-        "exclusivity" -> course.exclusivity.toString,
-        "phoneNumber" -> course.phoneNumber,
-        "creatorId" -> course.creatorId.getOrElse(-1).toString,
-        "approved" -> course.approved.getOrElse(false).toString
-      )
+        "id" -> course.id.map(_.toString),
+        "city" -> Some(course.city),
+        "state" -> Some(course.state),
+        "country" -> Some(course.country),
+        "exclusivity" -> Some(course.exclusivity.toString),
+        "phoneNumber" -> Some(course.phoneNumber),
+        "creatorId" -> course.creatorId.map(_.toString),
+        "approved" -> course.approved.map(_.toString)
+      ).collect { case (key, Some(value)) => key -> value }
     )
 
     val featurePlacemarks =
@@ -234,9 +238,9 @@ object KMLMapping {
       } yield {
         KMLPlacemark(s"${hole.number}-${feature.name}", feature.coordinates,
           Map(
-            "id" -> feature.id.map(_.toString).getOrElse("-1"),
-            "holeId" -> hole.id.map(_.toString).getOrElse("-1")
-          )
+            "id" -> feature.id.map(_.toString),
+            "holeId" -> hole.id.map(_.toString)
+          ).collect { case (key, Some(value)) => key -> value }
         )
       }
 

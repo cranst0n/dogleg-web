@@ -58,8 +58,8 @@ abstract class CourseOpsApp[T] extends App with Injectable {
   def op(file: File, course: Course): T
 
   def filter(file: File): Boolean = {
-    file.getName.toLowerCase.contains(courseNameFilter.toLowerCase) &&
-      isFileExtension(file.getName, "json")
+    (file.getName.toLowerCase.contains(courseNameFilter.toLowerCase) ||
+      courseNameFilter == "*") && isFileExtension(file.getName, "json")
   }
 
   implicit val playApp = new StaticApplication(Paths.get(".").toFile)
@@ -87,6 +87,27 @@ object AddElevation extends CourseOpsApp[Unit] {
     val jsonString = Json.prettyPrint(Json.toJson(courseWithElevation))
 
     writeToFile(file, jsonString)
+  }
+}
+
+object GenerateKmlFromJson extends CourseOpsApp[Unit] {
+
+  override def op(file: File, course: Course): Unit = {
+
+    val kmlFile =
+      new File(file.getAbsolutePath.reverse.dropWhile(_ != '.').reverse + "kml")
+
+    println(s"Generating KML data from ${file.getAbsolutePath}")
+
+    val kmlMapping =
+      KMLMapping(course).copy(
+        originalCourse = Some(course.raw),
+        courseRatings = Some(course.raw.ratings)
+      )
+
+    writeToFile(kmlFile, kmlMapping.kml)
+
+    println("KML generated.")
   }
 }
 
