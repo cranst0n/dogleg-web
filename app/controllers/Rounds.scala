@@ -2,10 +2,13 @@ package controllers
 
 import scala.concurrent.Future
 
+import akka.actor.{ Actor, Props }
+
 import org.joda.time.{ DateTime, DateTimeZone }
 
 import scaldi.Injector
 
+import play.api.libs.concurrent.Akka
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json._
 import play.api.mvc._
@@ -28,6 +31,9 @@ class Rounds(implicit val injector: Injector) extends DoglegController with Secu
   lazy val courseRatingDAO = inject[CourseRatingDAO]
   lazy val handicapService = inject[HandicapService]
 
+  lazy val handicappingActor =
+    Akka.system.actorOf(Props(classOf[HandicapUpdateActor], this), name = "myactor")
+
   def createRound: Action[JsValue] = HasToken(parse.json) { implicit request =>
     expect[RoundCreateRequest] { roundRequest =>
 
@@ -43,7 +49,7 @@ class Rounds(implicit val injector: Injector) extends DoglegController with Secu
             roundDAO.before(request.user, roundTime)
           )
 
-          updateRoundHandicaps(request.user, roundTime)
+          handicappingActor ! UpdateHandicaps(request.user, roundTime)
 
           Ok(Json.toJson(roundDAO.insert(round)))
 
@@ -59,7 +65,7 @@ class Rounds(implicit val injector: Injector) extends DoglegController with Secu
         round, roundDAO.before(request.user, round.time))
 
       roundDAO.update(handicappedRound).map { updatedRound =>
-        updateRoundHandicaps(request.user, updatedRound.time)
+        handicappingActor ! UpdateHandicaps(request.user, updatedRound.time)
         Ok(Json.toJson(updatedRound))
       } getOrElse notFound("Update failed", "Unknown round")
     }
@@ -79,7 +85,7 @@ class Rounds(implicit val injector: Injector) extends DoglegController with Secu
     roundDAO.findById(id).map { round =>
       if(round.user.id == request.user.id) {
         roundDAO.delete(id).map { deletedRound =>
-          updateRoundHandicaps(request.user, deletedRound.time)
+          handicappingActor ! UpdateHandicaps(request.user, deletedRound.time)
           ok("Round deleted.")
         } getOrElse serverError("Failed to delete round")
       } else {
@@ -98,15 +104,17 @@ class Rounds(implicit val injector: Injector) extends DoglegController with Secu
     Ok(Json.obj("handicap" -> handicap))
   }
 
-  private[this] def updateRoundHandicaps(user: User, after: DateTime): Future[List[Round]] = {
-    Future.sequence(
-      roundDAO.after(user, after).map { round =>
-        Future(
+  private[this] case class UpdateHandicaps(user: User, after: DateTime)
+
+  private[this] class HandicapUpdateActor extends Actor {
+    def receive = {
+      case UpdateHandicaps(user, after) => {
+        roundDAO.after(user, after).map { round =>
           roundDAO.update(
             handicapService.handicap(round, roundDAO.before(user, round.time))
           )
-        )
+        }
       }
-    ).map(_.flatten)
+    }
   }
 }
