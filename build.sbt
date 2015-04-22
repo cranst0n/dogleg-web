@@ -9,7 +9,7 @@ import ReleaseStateTransformations._
 
 // basics
 name := "dogleg-web"
-organization in ThisBuild := "org.dogleg"
+organization in ThisBuild := "org.cranst0n.dogleg"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 scalaVersion := "2.11.6"
@@ -30,6 +30,15 @@ maintainer in Linux := "Ian McIntosh <cranston.ian@gmail.com>"
 packageSummary in Linux := "Backend web server for Dogleg."
 packageDescription := "Dogleg is a golf data management system to record course and round data with GPS tracking and more."
 serverLoading in Debian := SystemV
+
+// Temporary fix for installed config always being overwritten on package install
+// See: https://github.com/sbt/sbt-native-packager/issues/378
+mappings in Universal := {
+  (mappings in Universal).value map {
+    case (file,name) if name startsWith "conf//" => (file, "conf/" + name.substring(6))
+    case (file,name) => (file,name)
+  }
+}
 
 // sbt-release
 releaseSettings
