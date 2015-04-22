@@ -94,6 +94,9 @@ libraryDependencies ++= Seq(
   "com.typesafe.play.plugins" %% "play-plugins-redis"  % "2.3.1",
   "com.typesafe.play"         %% "play-mailer"         % "2.4.0",
 
+  // Using this to support JSON format macro for case classes with > 22 params
+  "org.cvogt"                 %% "play-json-extensions" % "0.2",
+
   // WebJars (i.e. client-side) dependencies
   "org.webjars" % "requirejs" % "2.1.17",
   "org.webjars" % "angularjs" % "1.3.15" exclude("org.webjars", "jquery"),

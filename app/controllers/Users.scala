@@ -1,11 +1,14 @@
 package controllers
 
+import scala.concurrent.Future
+
 import scaldi.Injector
 
 import com.sksamuel.scrimage.{ Image => Scrimage }
 import com.sksamuel.scrimage.{ ImageTools => ScrimageTools }
 
 import play.api.Play
+import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
@@ -13,7 +16,7 @@ import play.api.mvc._
 
 import models.{ CourseSummary, Image, User }
 
-import services.{ CourseDAO, ImageDAO, MailerService }
+import services.{ CourseDAO, ImageDAO, MailerService, UserStatsService }
 
 case class ChangePasswordRequest(oldPassword: String, newPassword: String,
   newPasswordConfirm: String)
@@ -39,6 +42,7 @@ class Users(implicit val injector: Injector) extends DoglegController with Secur
   private[this] val avatarMaxSize = 10 * 1024 * 1024
 
   lazy val mailer = inject[MailerService]
+  lazy val userStatsService = inject[UserStatsService]
   lazy val imageDAO = inject[ImageDAO]
   lazy val courseDAO = inject[CourseDAO]
 
@@ -182,6 +186,12 @@ class Users(implicit val injector: Injector) extends DoglegController with Secur
         notFound("Unknown user")
       }
     }("A user may only delete their own account")
+  }
+
+  def stats(id: Long): Action[Unit] = HasToken.async(parse.empty) { implicit request =>
+    userDAO.findById(id).map { user =>
+      userStatsService.forUser(user).map(stats => Ok(Json.toJson(stats)))
+    } getOrElse(Future.successful(notFound("Unknown user")))
   }
 
   private[this] def sameUserOrAdmin[A](id: Long)(validBlock: => Result)(forbiddenMessage: String)(implicit request: TokenRequest[A]) = {

@@ -32,7 +32,7 @@ class Rounds(implicit val injector: Injector) extends DoglegController with Secu
   lazy val handicapService = inject[HandicapService]
 
   lazy val handicappingActor =
-    Akka.system.actorOf(Props(classOf[HandicapUpdateActor], this), name = "myactor")
+    Akka.system.actorOf(Props(classOf[RoundOpsActor], this), name = "roundOpsActor")
 
   def createRound: Action[JsValue] = HasToken(parse.json) { implicit request =>
     expect[RoundCreateRequest] { roundRequest =>
@@ -106,7 +106,10 @@ class Rounds(implicit val injector: Injector) extends DoglegController with Secu
 
   private[this] case class UpdateHandicaps(user: User, after: DateTime)
 
-  private[this] class HandicapUpdateActor extends Actor {
+  private[this] class RoundOpsActor extends Actor {
+
+    lazy val userStatsService = inject[UserStatsService]
+
     def receive = {
       case UpdateHandicaps(user, after) => {
         roundDAO.after(user, after).map { round =>
@@ -114,6 +117,7 @@ class Rounds(implicit val injector: Injector) extends DoglegController with Secu
             handicapService.handicap(round, roundDAO.before(user, round.time))
           )
         }
+        userStatsService.update(user)
       }
     }
   }

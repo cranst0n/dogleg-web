@@ -26,11 +26,14 @@ case class Round(id: Option[Long], user: User, course: Course,
     }
   }
 
-  lazy val (score,putts,penaltyStrokes) =
-    holeScores.foldLeft((0,0,0)) { case ((score,putts,penaltyStrokes),hole) =>
-      (score + hole.score, putts + hole.putts,
-        penaltyStrokes + hole.penaltyStrokes)
-    }
+  lazy val (score, netScore, putts, penaltyStrokes) =
+    holeScores.foldLeft((0,0,0,0))
+      { case ((score,netScore,putts,penaltyStrokes), holeScore) =>
+        (score + holeScore.score,
+          netScore + holeScore.netScore,
+          putts + holeScore.putts,
+          penaltyStrokes + holeScore.penaltyStrokes)
+      }
 
   lazy val par = rating.par
 
@@ -41,6 +44,20 @@ case class Round(id: Option[Long], user: User, course: Course,
       }
     }
   }
+
+  lazy val (aces, eagles, birdies, pars, bogeys, others) =
+    scoreRatings.foldLeft((0,0,0,0,0,0))
+      { case ((aces, eagles, birdies, pars, bogeys, others), (holeScore, holeRating)) =>
+
+        val newAces = if(holeScore.score == 1) aces + 1 else aces
+        val parDiff = holeScore.score - holeRating.par
+
+        if(parDiff <= -2) (newAces, eagles + 1, birdies, pars, bogeys, others)
+        else if(parDiff == -1) (newAces, eagles, birdies + 1, pars, bogeys, others)
+        else if(parDiff == 0) (newAces, eagles, birdies, pars + 1, bogeys, others)
+        else if(parDiff == 1) (newAces, eagles, birdies, pars, bogeys + 1, others)
+        else (newAces, eagles, birdies, pars, bogeys, others + 1)
+      }
 }
 
 object Round {

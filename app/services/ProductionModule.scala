@@ -20,6 +20,7 @@ class ProductionModule extends Module {
   bind[ElevationService] to new MockElevationService
 
   bind[HandicapService] to new DefaultHandicapService
+  bind[UserStatsService] to new DefaultUserStatsService
 
   bind[CrashReportDAO] to new CrashReportDAOSlick
   bind[ImageDAO] to new ImageDAOSlick
