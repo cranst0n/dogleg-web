@@ -85,7 +85,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.play"         %% "play-slick"          % "0.8.1",
   "org.postgresql"            %  "postgresql"          % "9.4-1201-jdbc41",
   "com.github.tminglei"       %% "slick-pg"            % "0.8.5",
-  "com.edulify"               %% "play-hikaricp"       % "2.0.1",
+  "com.edulify"               %% "play-hikaricp"       % "2.0.4",
   "com.vividsolutions"        %  "jts"                 % "1.13",
   "com.lambdaworks"           %  "scrypt"              % "1.4.0",
   "com.github.nscala-time"    %% "nscala-time"         % "1.8.0",
