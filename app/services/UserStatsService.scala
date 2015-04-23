@@ -77,71 +77,146 @@ class DefaultUserStatsService(implicit val injector: Injector)
         else 0
 
       val scoreRatings = userRounds.flatMap(_.scoreRatings)
-      val birdieStreak =
-        longestStreak(scoreRatings){ case (score, rating) =>
+
+      val fairwayHitPercentage = {
+        val (fairwayHitOpportunities, fairwaysHit) =
+          scoreRatings.foldLeft(0,0) { case ((opps, hits), (score, rating)) =>
+            rating.par match {
+              case p if p > 3 && score.fairwayHit => (opps + 1, hits + 1)
+              case p if p > 3 => (opps + 1, hits)
+              case _ => (opps, hits)
+            }
+          }
+
+        fairwaysHit / fairwayHitOpportunities.toDouble
+      }
+
+      val girPercentage =
+        scoreRatings.count { case (score, rating) => score.gir } / scoreRatings.size.toDouble
+
+      val grossBirdieStreak =
+        longestStreak(scoreRatings) { case (score, rating) =>
           score.score < rating.par
         }
 
-      val parStreak =
-        longestStreak(scoreRatings){ case (score, rating) =>
+      val netBirdieStreak =
+        longestStreak(scoreRatings) { case (score, rating) =>
+          score.netScore < rating.par
+        }
+
+      val grossParStreak =
+        longestStreak(scoreRatings) { case (score, rating) =>
           score.score <= rating.par
+        }
+
+      val netParStreak =
+        longestStreak(scoreRatings) { case (score, rating) =>
+          score.netScore <= rating.par
         }
 
       val fewestPutts18Hole =
         if(rounds18Holes.nonEmpty) rounds18Holes.map(_.putts).min
         else 0
-      val mostBirdies18Hole =
+
+      val grossMostBirdies18Hole =
         if(rounds18Holes.nonEmpty) rounds18Holes.map(_.birdies).max
         else 0
-      val mostPars18Hole =
+      val grossMostPars18Hole =
         if(rounds18Holes.nonEmpty) rounds18Holes.map(_.pars).max
         else 0
 
-      val (totalHoles, totalPutts, totalAces, totalEagles, totalBirdies, totalPars) =
-        userRounds.foldLeft((0, 0, 0, 0, 0, 0))
-          { case ((holes, putts, aces, eagles, birdies, pars), round) =>
-            (holes + round.numHoles,
-              putts + round.putts,
-              aces + round.aces,
-              eagles + round.eagles,
-              birdies + round.birdies,
-              pars + round.pars
-            )
-          }
+      val netMostBirdies18Hole =
+        if(rounds18Holes.nonEmpty) rounds18Holes.map(_.netBirdies).max
+        else 0
+      val netMostPars18Hole =
+        if(rounds18Holes.nonEmpty) rounds18Holes.map(_.netPars).max
+        else 0
+
+      val (totalHoles, totalPutts, totalPenalties,
+        grossAces, grossEagles, grossBirdies, grossPars,
+        netAces, netEagles, netBirdies, netPars) =
+          userRounds.foldLeft((0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+            { case ((holes, putts, penalties,
+              grossAces, grossEagles, grossBirdies, grossPars,
+              netAces, netEagles, netBirdies, netPars), round) =>
+
+              (holes + round.numHoles,
+                putts + round.putts,
+                penalties + round.penaltyStrokes,
+                grossAces + round.aces,
+                grossEagles + round.eagles,
+                grossBirdies + round.birdies,
+                grossPars + round.pars,
+                netAces + round.netAces,
+                netEagles + round.netEagles,
+                netBirdies + round.netBirdies,
+                netPars + round.netPars
+              )
+            }
 
       val averagePuttPerHole =
         if(totalHoles > 0) totalPutts / totalHoles.toDouble
         else 0
-
-      val averageEaglesPerRound =
-        if(userRounds.nonEmpty) totalEagles / userRounds.size.toDouble
-        else 0
-      val averageBirdiesPerRound =
-        if(userRounds.nonEmpty) totalBirdies / userRounds.size.toDouble
-        else 0
-      val averageParsPerRound =
-        if(userRounds.nonEmpty) totalPars / userRounds.size.toDouble
+      val averagePenaltiesPerRound =
+        if(userRounds.nonEmpty) totalPenalties / userRounds.size.toDouble
         else 0
 
-      val (numPar3s, par3Sum, numPar4s, par4Sum, numPar5s, par5Sum) =
-        userRounds.flatMap(_.scoreRatings).foldLeft((0, 0, 0, 0, 0, 0))
-          { case ((np3, p3s, np4, p4s, np5, p5s), (holeScore, holeRating)) =>
+      val grossAverageEaglesPerRound =
+        if(userRounds.nonEmpty) grossEagles / userRounds.size.toDouble
+        else 0
+      val grossAverageBirdiesPerRound =
+        if(userRounds.nonEmpty) grossBirdies / userRounds.size.toDouble
+        else 0
+      val grossAverageParsPerRound =
+        if(userRounds.nonEmpty) grossPars / userRounds.size.toDouble
+        else 0
+
+      val netAverageEaglesPerRound =
+        if(userRounds.nonEmpty) netEagles / userRounds.size.toDouble
+        else 0
+      val netAverageBirdiesPerRound =
+        if(userRounds.nonEmpty) netBirdies / userRounds.size.toDouble
+        else 0
+      val netAverageParsPerRound =
+        if(userRounds.nonEmpty) netPars / userRounds.size.toDouble
+        else 0
+
+      val (numPar3s, par3GrossSum, par3NetSum, numPar4s, par4GrossSum, par4NetSum, numPar5s, par5GrossSum, par5NetSum) =
+        userRounds.flatMap(_.scoreRatings).foldLeft((0, 0, 0, 0, 0, 0, 0, 0, 0))
+          { case ((np3, p3gs, p3ns, np4, p4gs, p4ns, np5, p5gs, p5ns), (holeScore, holeRating)) =>
+
             holeRating.par match {
-              case 3 => (np3 + 1, p3s + holeScore.score, np4, p4s, np5, p5s)
-              case 4 => (np3, p3s, np4 + 1, p4s + holeScore.score, np5, p5s)
-              case 5 => (np3, p3s, np4, p4s, np5 + 1, p5s + holeScore.score)
-              case _ => (np3, p3s, np4, p4s, np5, p5s)
+              case 3 => {
+                (np3 + 1, p3gs + holeScore.score, p3ns + holeScore.netScore, np4, p4gs, p4ns, np5, p5gs, p5ns)
+              }
+              case 4 => {
+                (np3, p3gs, p3ns, np4 + 1, p4gs + holeScore.score, p4ns + holeScore.netScore, np5, p5gs, p5ns)
+              }
+              case 5 => {
+                (np3, p3gs, p3ns, np4, p4gs, p4ns, np5 + 1, p5gs + holeScore.score, p5ns + holeScore.netScore)
+              }
+              case _ => (np3, p3gs, p3ns, np4, p4gs, p4ns, np5, p5gs, p5ns)
             }
           }
 
-      val par3Average =
-        if(numPar3s > 0) par3Sum / numPar3s.toDouble
+      val grossPar3Average =
+        if(numPar3s > 0) par3GrossSum / numPar3s.toDouble
         else 0
-      val par4Average =
-        if(numPar4s > 0) par4Sum / numPar4s.toDouble
+      val grossPar4Average =
+        if(numPar4s > 0) par4GrossSum / numPar4s.toDouble
         else 0
-      val par5Average =
-        if(numPar5s > 0) par5Sum / numPar5s.toDouble
+      val grossPar5Average =
+        if(numPar5s > 0) par5GrossSum / numPar5s.toDouble
+        else 0
+
+      val netPar3Average =
+        if(numPar3s > 0) par3NetSum / numPar3s.toDouble
+        else 0
+      val netPar4Average =
+        if(numPar4s > 0) par4NetSum / numPar4s.toDouble
+        else 0
+      val netPar5Average =
+        if(numPar5s > 0) par5NetSum / numPar5s.toDouble
         else 0
 
       val stats =
@@ -149,13 +224,21 @@ class DefaultUserStatsService(implicit val injector: Injector)
           autoHandicap, userRounds.size,
           lowGross9Hole, lowGross18Hole, averageGross18Hole,
           lowNet9Hole, lowNet18Hole, averageNet18Hole,
-          totalAces, birdieStreak, parStreak,
-          fewestPutts18Hole, mostBirdies18Hole, mostPars18Hole,
-          averagePuttPerHole,
-          averageEaglesPerRound, totalEagles,
-          averageBirdiesPerRound, totalBirdies,
-          averageParsPerRound, totalPars,
-          par3Average, par4Average, par5Average
+          fairwayHitPercentage, girPercentage,
+          grossAces, grossBirdieStreak, grossParStreak,
+          netAces, netBirdieStreak, netParStreak,
+          fewestPutts18Hole,
+          grossMostBirdies18Hole, grossMostPars18Hole,
+          netMostBirdies18Hole, netMostPars18Hole,
+          averagePuttPerHole, averagePenaltiesPerRound,
+          grossAverageEaglesPerRound, grossEagles,
+          grossAverageBirdiesPerRound, grossBirdies,
+          grossAverageParsPerRound, grossPars,
+          netAverageEaglesPerRound, netEagles,
+          netAverageBirdiesPerRound, netBirdies,
+          netAverageParsPerRound, netPars,
+          grossPar3Average, grossPar4Average, grossPar5Average,
+          netPar3Average, netPar4Average, netPar5Average
         )
 
       Cache.set(cacheKey(user), Json.toJson(stats).toString)

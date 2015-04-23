@@ -11,6 +11,7 @@ case class Round(id: Option[Long], user: User, course: Course,
   lazy val numHoles = holeScores.size
 
   lazy val (fullRound,front9,back9) = {
+
     val holeNumbers = holeScores.map(_.hole.number)
 
     (holeScores.size == 18,
@@ -45,19 +46,36 @@ case class Round(id: Option[Long], user: User, course: Course,
     }
   }
 
-  lazy val (aces, eagles, birdies, pars, bogeys, others) =
-    scoreRatings.foldLeft((0,0,0,0,0,0))
-      { case ((aces, eagles, birdies, pars, bogeys, others), (holeScore, holeRating)) =>
-
-        val newAces = if(holeScore.score == 1) aces + 1 else aces
-        val parDiff = holeScore.score - holeRating.par
-
-        if(parDiff <= -2) (newAces, eagles + 1, birdies, pars, bogeys, others)
-        else if(parDiff == -1) (newAces, eagles, birdies + 1, pars, bogeys, others)
-        else if(parDiff == 0) (newAces, eagles, birdies, pars + 1, bogeys, others)
-        else if(parDiff == 1) (newAces, eagles, birdies, pars, bogeys + 1, others)
-        else (newAces, eagles, birdies, pars, bogeys, others + 1)
+  private[this] lazy val (grossScoreStats, netScoreStats) =
+    scoreRatings.foldLeft(ScoreStats(0,0,0,0,0,0),ScoreStats(0,0,0,0,0,0))
+      { case ((grossStats, netStats), (holeScore, holeRating)) =>
+        (
+          grossStats.add(holeScore.score, holeRating.par),
+          netStats.add(holeScore.netScore, holeRating.par)
+        )
       }
+
+  lazy val ScoreStats(aces, eagles, birdies, pars, bogeys, others) = grossScoreStats
+  lazy val ScoreStats(netAces, netEagles, netBirdies, netPars, netBogeys, netOthers) = netScoreStats
+
+  private[this] case class ScoreStats(aces: Int, eagles: Int, birdies: Int,
+    pars: Int, bogeys: Int, others: Int) {
+
+    def add(score: Int, par: Int) = {
+
+      val newAces = if(score == 1) aces + 1 else aces
+
+      val parDiff = score - par
+
+      parDiff match {
+        case x if x <= -2 => copy(aces = newAces, eagles = eagles + 1)
+        case x if x == -1 => copy(aces = newAces, birdies = birdies + 1)
+        case x if x == 0 => copy(aces = newAces, pars = pars + 1)
+        case x if x == 1 => copy(aces = newAces, bogeys = bogeys + 1)
+        case _ => copy(aces = newAces, others = others + 1)
+      }
+    }
+  }
 }
 
 object Round {
