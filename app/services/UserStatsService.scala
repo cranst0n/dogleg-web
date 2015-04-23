@@ -1,6 +1,7 @@
 package services
 
 import scala.concurrent.Future
+import scala.util.{ Failure, Success, Try }
 
 import scaldi.{ Injectable, Injector }
 
@@ -25,9 +26,14 @@ class DefaultUserStatsService(implicit val injector: Injector)
 
   override def forUser(user: User): Future[UserStats] = {
     Cache.getAs[String](cacheKey(user)).map { statsJson =>
-      Json.parse(statsJson).validate[UserStats] match {
-        case JsSuccess(stats, _) => Future.successful(stats)
-        case JsError(_) => update(user)
+      Try {
+        Json.parse(statsJson).validate[UserStats] match {
+          case JsSuccess(stats, _) => Future.successful(stats)
+          case JsError(_) => update(user)
+        }
+      } match {
+        case Success(v) => v
+        case Failure(_) => update(user)
       }
     } getOrElse update(user)
   }
@@ -56,7 +62,7 @@ class DefaultUserStatsService(implicit val injector: Injector)
         else 0
       val averageGross18Hole =
         if(rounds18Holes.nonEmpty)
-          rounds18Holes.map(_.score).sum / rounds18Holes.size
+          rounds18Holes.map(_.score).sum / rounds18Holes.size.toDouble
         else 0
 
       val lowNet9Hole =
@@ -67,7 +73,7 @@ class DefaultUserStatsService(implicit val injector: Injector)
         else 0
       val averageNet18Hole =
         if(rounds18Holes.nonEmpty)
-          rounds18Holes.map(_.netScore).sum / rounds18Holes.size
+          rounds18Holes.map(_.netScore).sum / rounds18Holes.size.toDouble
         else 0
 
       val scoreRatings = userRounds.flatMap(_.scoreRatings)
@@ -81,7 +87,7 @@ class DefaultUserStatsService(implicit val injector: Injector)
           score.score <= rating.par
         }
 
-      val lowPutts18Hole =
+      val fewestPutts18Hole =
         if(rounds18Holes.nonEmpty) rounds18Holes.map(_.putts).min
         else 0
       val mostBirdies18Hole =
@@ -144,7 +150,7 @@ class DefaultUserStatsService(implicit val injector: Injector)
           lowGross9Hole, lowGross18Hole, averageGross18Hole,
           lowNet9Hole, lowNet18Hole, averageNet18Hole,
           totalAces, birdieStreak, parStreak,
-          lowPutts18Hole, mostBirdies18Hole, mostPars18Hole,
+          fewestPutts18Hole, mostBirdies18Hole, mostPars18Hole,
           averagePuttPerHole,
           averageEaglesPerRound, totalEagles,
           averageBirdiesPerRound, totalBirdies,
