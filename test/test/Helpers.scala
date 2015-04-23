@@ -28,7 +28,10 @@ object Helpers extends Mockito {
 
   class FakeDoglegApplication(options: Map[String,String] = Map.empty)
     extends WithApplication(
-      FakeApplication(additionalConfiguration = testDBConfig ++ options)
+      FakeApplication(
+        withoutPlugins = List("com.typesafe.plugin.RedisPlugin"),
+        additionalConfiguration = testDBConfig ++ options + ("ehcacheplugin" -> "enabled")
+      )
     ) with Injectable {
       override def around[T: AsResult](t: => T): Result = super.around {
         try {
@@ -40,7 +43,10 @@ object Helpers extends Mockito {
     }
 
   def DoglegTestApp[T](block: Module => T, options: Map[String,String] = Map.empty): T = {
-    running(FakeApplication(additionalConfiguration = testDBConfig ++ options)) {
+    running(FakeApplication(
+      withoutPlugins = List("com.typesafe.plugin.RedisPlugin"),
+      additionalConfiguration = testDBConfig ++ options + ("ehcacheplugin" -> "enabled")
+    )) {
       try {
         block(services.ProductionModule())
       } finally {
