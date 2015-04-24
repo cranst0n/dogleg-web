@@ -42,16 +42,18 @@ class Rounds(implicit val injector: Injector) extends DoglegController with Secu
 
           val roundTime = new DateTime(roundRequest.time, DateTimeZone.UTC)
 
-          val round = handicapService.handicap(
-            Round(None, request.user, roundCourse, roundRating,
-              roundTime, roundRequest.holeScores, None,
-              roundRequest.handicapOverride, roundRequest.official),
-            roundDAO.before(request.user, roundTime)
+          val insertedRound = roundDAO.insert(
+            handicapService.handicap(
+              Round(None, request.user, roundCourse, roundRating,
+                roundTime, roundRequest.holeScores, None,
+                roundRequest.handicapOverride, roundRequest.official),
+              roundDAO.before(request.user, roundTime)
+            )
           )
 
           handicappingActor ! UpdateHandicaps(request.user, roundTime)
 
-          Ok(Json.toJson(roundDAO.insert(round)))
+          Ok(Json.toJson(insertedRound))
 
         } getOrElse notFound("Unknown course rating")
       } getOrElse notFound("Unknown course")
