@@ -91,8 +91,18 @@ class DefaultUserStatsService(implicit val injector: Injector)
         fairwaysHit / fairwayHitOpportunities.toDouble
       }
 
-      val girPercentage =
-        scoreRatings.count { case (score, rating) => score.gir } / scoreRatings.size.toDouble
+      val girPercentage = scoreRatings.count { case (score, rating) =>
+        score.gir } / scoreRatings.size.toDouble
+
+      val scramblingOpps = scoreRatings.filterNot(_._1.gir)
+
+      val grossScrambling = scramblingOpps.count { case (score, rating) =>
+        score.score <= rating.par
+      } / scramblingOpps.size.toDouble
+
+      val netScrambling = scramblingOpps.count { case (score, rating) =>
+        score.netScore <= rating.par
+      } / scramblingOpps.size.toDouble
 
       val grossBirdieStreak =
         longestStreak(scoreRatings) { case (score, rating) =>
@@ -225,6 +235,7 @@ class DefaultUserStatsService(implicit val injector: Injector)
           lowGross9Hole, lowGross18Hole, averageGross18Hole,
           lowNet9Hole, lowNet18Hole, averageNet18Hole,
           fairwayHitPercentage, girPercentage,
+          grossScrambling, netScrambling,
           grossAces, grossBirdieStreak, grossParStreak,
           netAces, netBirdieStreak, netParStreak,
           fewestPutts18Hole,
