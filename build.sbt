@@ -79,8 +79,8 @@ libraryDependencies ++= Seq(
   cache, filters, jdbc, ws,
 
   // server-side
-  "org.scaldi"                %% "scaldi"              % "0.5.4",
-  "org.scaldi"                %% "scaldi-play"         % "0.5.4",
+  "org.scaldi"                %% "scaldi"              % "0.5.5",
+  "org.scaldi"                %% "scaldi-play"         % "0.5.5",
   "com.github.tototoshi"      %% "play-flyway"         % "1.2.1",
   "com.typesafe.play"         %% "play-slick"          % "0.8.1",
   "org.postgresql"            %  "postgresql"          % "9.4-1201-jdbc41",
@@ -88,21 +88,21 @@ libraryDependencies ++= Seq(
   "com.edulify"               %% "play-hikaricp"       % "2.0.4",
   "com.vividsolutions"        %  "jts"                 % "1.13",
   "com.lambdaworks"           %  "scrypt"              % "1.4.0",
-  "com.github.nscala-time"    %% "nscala-time"         % "1.8.0",
+  "com.github.nscala-time"    %% "nscala-time"         % "2.0.0",
   "com.sksamuel.scrimage"     %% "scrimage-core"       % "1.4.2",
   "com.sksamuel.scrimage"     %% "scrimage-canvas"     % "1.4.2",
   "com.typesafe.play.plugins" %% "play-plugins-redis"  % "2.3.1",
-  "com.typesafe.play"         %% "play-mailer"         % "2.4.0",
+  "com.typesafe.play"         %% "play-mailer"         % "2.4.1",
 
   // Using this to support JSON format macro for case classes with > 22 params
   "org.cvogt"                 %% "play-json-extensions" % "0.2",
 
   // WebJars (i.e. client-side) dependencies
   "org.webjars" % "requirejs" % "2.1.17",
-  "org.webjars" % "angularjs" % "1.3.15" exclude("org.webjars", "jquery"),
+  "org.webjars" % "angularjs" % "1.4.0" exclude("org.webjars", "jquery"),
   "org.webjars" % "cryptojs"  % "3.1.2",
   "org.webjars" % "lodash"    % "3.6.0",
-  "org.webjars" % "momentjs"  % "2.9.0",
+  "org.webjars" % "momentjs"  % "2.10.2",
   "org.webjars" % "angular-material" % "0.8.3"
 )
 
