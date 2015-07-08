@@ -23,7 +23,7 @@ define(['angular', 'common', 'CryptoJS'], function (angular) {
         }).error(function () {
           $log.debug('Token no longer valid, please log in.');
           token = undefined;
-          delete $cookies.remove('XSRF-TOKEN');
+          $cookies.remove('XSRF-TOKEN');
           return $q.reject("Token invalid");
         });
     }
@@ -47,7 +47,7 @@ define(['angular', 'common', 'CryptoJS'], function (angular) {
       },
       logout: function () {
         // Logout on server in a real app
-        delete $cookies.remove('XSRF-TOKEN');
+        $cookies.remove('XSRF-TOKEN');
         token = undefined;
         user = undefined;
         return playRoutes.controllers.Authentication.logout().post().then(function () {
