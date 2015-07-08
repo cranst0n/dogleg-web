@@ -4,15 +4,14 @@ import com.typesafe.sbt.SbtNativePackager._
 import com.typesafe.sbt.packager.archetypes.ServerLoader.{SystemV, Upstart}
 import NativePackagerKeys._
 
-import sbtrelease._
-import ReleaseStateTransformations._
+import ReleaseTransformations._
 
 // basics
 name := "dogleg-web"
 organization in ThisBuild := "org.cranst0n.dogleg"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
-scalaVersion := "2.11.6"
+scalaVersion := "2.11.7"
 
 // sbt-buildinfo
 buildInfoSettings
@@ -41,8 +40,7 @@ mappings in Universal := {
 }
 
 // sbt-release
-releaseSettings
-ReleaseKeys.releaseProcess := Seq[ReleaseStep](
+releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,              // : ReleaseStep
   inquireVersions,                        // : ReleaseStep
   runTest,                                // : ReleaseStep
@@ -79,8 +77,8 @@ libraryDependencies ++= Seq(
   cache, filters, jdbc, ws,
 
   // server-side
-  "org.scaldi"                %% "scaldi"              % "0.5.5",
-  "org.scaldi"                %% "scaldi-play"         % "0.5.5",
+  "org.scaldi"                %% "scaldi"              % "0.5.6",
+  "org.scaldi"                %% "scaldi-play-23"      % "0.5.6",
   "com.github.tototoshi"      %% "play-flyway"         % "1.2.1",
   "com.typesafe.play"         %% "play-slick"          % "0.8.1",
   "org.postgresql"            %  "postgresql"          % "9.4-1201-jdbc41",
@@ -98,11 +96,11 @@ libraryDependencies ++= Seq(
   "org.cvogt"                 %% "play-json-extensions" % "0.2",
 
   // WebJars (i.e. client-side) dependencies
-  "org.webjars" % "requirejs" % "2.1.17",
-  "org.webjars" % "angularjs" % "1.4.0" exclude("org.webjars", "jquery"),
+  "org.webjars" % "requirejs" % "2.1.18",
+  "org.webjars" % "angularjs" % "1.4.2" exclude("org.webjars", "jquery"),
   "org.webjars" % "cryptojs"  % "3.1.2",
-  "org.webjars" % "lodash"    % "3.6.0",
-  "org.webjars" % "momentjs"  % "2.10.2",
+  "org.webjars" % "lodash"    % "3.9.0",
+  "org.webjars" % "momentjs"  % "2.10.3",
   "org.webjars" % "angular-material" % "0.8.3"
 )
 
