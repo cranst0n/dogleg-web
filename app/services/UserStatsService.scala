@@ -23,6 +23,7 @@ class DefaultUserStatsService(implicit val injector: Injector)
   extends UserStatsService with Injectable {
 
   lazy val roundDAO = inject[RoundDAO]
+  lazy val handicapService = inject[HandicapService]
 
   override def forUser(user: User): Future[UserStats] = {
     Cache.getAs[String](cacheKey(user)).map { statsJson =>
@@ -49,7 +50,8 @@ class DefaultUserStatsService(implicit val injector: Injector)
         sortWith(_.size > _.size).
         map(_.headOption).flatten.take(3)
 
-      val autoHandicap = userRounds.headOption.flatMap(_.handicap).getOrElse(0)
+      val autoHandicap =
+        handicapService.handicap(userRounds).map(_.floor.toInt).getOrElse(0)
 
       val rounds9Holes = userRounds.filter(_.numHoles == 9)
       val rounds18Holes = userRounds.filter(_.numHoles == 18)
